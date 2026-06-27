@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OfertaFlow</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f4f4f4; font-family: Arial, Helvetica, sans-serif; min-height: 100vh; padding: 20px; }
+  .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 28px; box-shadow: 0 8px 25px rgba(0,0,0,.08); }
+  h1 { text-align: center; margin-bottom: 20px; font-size: 22px; color: #1e1b4b; }
+  label { display: block; font-size: 12px; font-weight: 700; color: #6d28d9; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; margin-top: 14px; }
+  input, textarea { width: 100%; padding: 12px 14px; font-size: 15px; border-radius: 10px; border: 1.5px solid #ddd; color: #111; }
+  textarea { resize: none; height: 75px; }
+  .row { display: flex; gap: 10px; }
+  .row > div { flex: 1; }
+  .btn { width: 100%; margin-top: 16px; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .btn-blue { background: #2563eb; color: white; }
+  .btn-blue:hover { background: #1d4ed8; }
+  .btn-blue:disabled { background: #93c5fd; cursor: not-allowed; }
+  .btn-green { background: #16a34a; color: white; }
+  .btn-green:hover { background: #15803d; }
+  .btn-ghost { background: transparent; color: #6d28d9; font-size: 13px; margin-top: 8px; }
+  .produto-img { width: 100%; border-radius: 10px; margin-top: 12px; max-height: 200px; object-fit: cover; border: 1px solid #eee; }
+  .desconto { text-align: center; color: #dc2626; font-weight: 700; font-size: 15px; margin-top: 10px; }
+  .preview { background: #f8f8ff; border: 1.5px solid #e0e0ff; border-radius: 10px; padding: 14px; font-size: 13px; white-space: pre-wrap; font-family: monospace; line-height: 1.6; margin-top: 8px; color: #1e1b4b; }
+  .tag { display: inline-block; background: #dcfce7; color: #16a34a; font-size: 11px; padding: 2px 8px; border-radius: 20px; margin-top: 8px; margin-bottom: 4px; }
+  .loading { text-align: center; padding: 28px 0; color: #6d28d9; font-size: 14px; }
+  .erro { color: #dc2626; font-size: 13px; text-align: center; margin-top: 10px; }
+  .sucesso { text-align: center; padding: 20px 0; }
+  .sucesso .emoji { font-size: 48px; }
+  .sucesso h2 { color: #16a34a; margin-top: 10px; }
+  .sucesso p { color: #6b7280; font-size: 13px; margin-top: 6px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🛍 OfertaFlow</h1>
+
+  <!-- STEP 1: INPUT -->
+  <div id="step-input">
+    <label>Link do produto</label>
+    <input id="url" type="text" placeholder="Cole o link da Dafiti aqui">
+    <button class="btn btn-blue" onclick="buscarProduto()">🔍 Buscar Produto</button>
+    <button class="btn btn-ghost" onclick="goManual()">Preencher manualmente →</button>
+  </div>
+
+  <!-- STEP: LOADING -->
+  <div id="step-loading" class="hidden loading">
+    <p>⚙️ Buscando informações...</p>
+  </div>
+
+  <!-- STEP 2: FORMULÁRIO -->
+  <div id="step-form" class="hidden">
+    <div id="auto-tag" class="hidden"><span class="tag">✨ Preenchido automaticamente</span></div>
+    <img id="img-preview" class="produto-img hidden" src="" alt="Produto">
+    <label>Nome do produto</label>
+    <input id="nome" type="text" placeholder="Nome do produto" oninput="calcDesc()">
+    <div class="row">
+      <div>
+        <label>Preço original</label>
+        <input id="precoOrig" type="text" placeholder="Ex: 299,90" oninput="calcDesc()">
+      </div>
+      <div>
+        <label>Preço atual</label>
+        <input id="precoAtual" type="text" placeholder="Ex: 159,90" oninput="calcDesc()">
+      </div>
+    </div>
+    <label>Link de afiliado</label>
+    <input id="linkAfiliado" type="text" placeholder="Seu link de afiliado">
+    <label>Observação (opcional)</label>
+    <input id="extra" type="text" placeholder="Ex: Frete grátis!">
+    <div id="desconto" class="desconto hidden"></div>
+    <button class="btn btn-blue" onclick="goPreview()">Ver prévia →</button>
+    <button class="btn btn-ghost" onclick="show('input')">← Voltar</button>
+  </div>
+
+  <!-- STEP 3: PREVIEW -->
+  <div id="step-preview" class="hidden">
+    <label>Prévia da mensagem</label>
+    <img id="preview-img" class="produto-img hidden" src="" alt="Produto">
+    <div id="preview-box" class="preview"></div>
+    <button class="btn btn-green" id="btn-send" onclick="postar()">✅ Postar no Telegram</button>
+    <button class="btn btn-ghost" onclick="show('form')">← Editar</button>
+  </div>
+
+  <!-- STEP 4: SUCESSO -->
+  <div id="step-sucesso" class="hidden sucesso">
+    <div class="emoji">🎉</div>
+    <h2>Postado com sucesso!</h2>
+    <p>A oferta foi para @ofertasapatospremium</p>
+    <button class="btn btn-blue" onclick="reset()" style="margin-top:16px">Postar outra oferta</button>
+  </div>
+
+  <!-- STEP 5: ERRO -->
+  <div id="step-erro" class="hidden sucesso">
+    <div class="emoji">⚠️</div>
+    <h2 style="color:#dc2626">Erro ao enviar</h2>
+    <p id="err-msg"></p>
+    <button class="btn btn-blue" onclick="show('preview')" style="margin-top:16px">Tentar novamente</button>
+  </div>
+
+</div>
+
+<script>
+const WEBHOOK_EXTRATOR = "https://hook.us2.make.com/9h9tic2oo03ftyghkomkjyu90if73i4w";
+const WEBHOOK_POST     = "https://hook.us2.make.com/ziofxokbbynercs7pz56qwh1gunhvkml";
+
+function show(step) {
+  ['input','loading','form','preview','sucesso','erro'].forEach(s => {
+    document.getElementById('step-'+s).classList.add('hidden');
+  });
+  document.getElementById('step-'+step).classList.remove('hidden');
+}
+
+function goManual() {
+  document.getElementById('linkAfiliado').value = document.getElementById('url').value.trim();
+  document.getElementById('auto-tag').classList.add('hidden');
+  document.getElementById('img-preview').classList.add('hidden');
+  show('form');
+}
+
+async function buscarProduto() {
+  const url = document.getElementById('url').value.trim();
+  if (!url) { alert('Cole o link do produto!'); return; }
+  show('loading');
+  try {
+    const res = await fetch(WEBHOOK_EXTRATOR, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: url })
+    });
+    const dados = await res.json();
+    if (dados.nome) {
+      document.getElementById('nome').value = dados.nome || '';
+      document.getElementById('precoOrig').value = dados.precoOriginal || '';
+      document.getElementById('precoAtual').value = dados.precoAtual || '';
+      document.getElementById('linkAfiliado').value = url;
+      document.getElementById('auto-tag').classList.remove('hidden');
+      if (dados.imagem) {
+        const img = document.getElementById('img-preview');
+        img.src = dados.imagem;
+        img.classList.remove('hidden');
+      }
+      calcDesc();
+      show('form');
+    } else {
+      throw new Error('Dados não encontrados');
+    }
+  } catch(e) {
+    document.getElementById('linkAfiliado').value = document.getElementById('url').value.trim();
+    show('form');
+    setTimeout(() => alert('Não consegui extrair automaticamente. Preencha manualmente!'), 100);
+  }
+}
+
+function pToFloat(v) {
+  return parseFloat((v||'').replace(',','.').replace(/[^\d.]/g,''));
+}
+
+function calcDesc() {
+  const o = pToFloat(document.getElementById('precoOrig').value);
+  const a = pToFloat(document.getElementById('precoAtual').value);
+  const el = document.getElementById('desconto');
+  if (o && a && o > a) {
+    el.textContent = '🔥 ' + Math.round(((o-a)/o)*100) + '% OFF';
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+function buildMsg() {
+  const nome  = document.getElementById('nome').value;
+  const orig  = document.getElementById('precoOrig').value;
+  const atual = document.getElementById('precoAtual').value;
+  const link  = document.getElementById('linkAfiliado').value || document.getElementById('url').value;
+  const extra = document.getElementById('extra').value;
+  const o = pToFloat(orig), a = pToFloat(atual);
+  const pct = (o && a && o > a) ? ' *(' + Math.round(((o-a)/o)*100) + '% OFF)*' : '';
+  return `🚨 *OFERTA IMPERDÍVEL* 🚨\n\n👠 *${nome}*\n\n🏷️ De: R$ ${orig}\n🔥 Por: *R$ ${atual}*${pct}\n\n${extra ? '📝 '+extra+'\n\n' : ''}🔗 ${link}`;
+}
+
+function goPreview() {
+  const nome  = document.getElementById('nome').value;
+  const orig  = document.getElementById('precoOrig').value;
+  const atual = document.getElementById('precoAtual').value;
+  if (!nome || !orig || !atual) { alert('Preencha nome e preços!'); return; }
+  const imagem = document.getElementById('img-preview').src;
+  const pi = document.getElementById('preview-img');
+  if (imagem && !document.getElementById('img-preview').classList.contains('hidden')) {
+    pi.src = imagem; pi.classList.remove('hidden');
+  } else { pi.classList.add('hidden'); }
+  document.getElementById('preview-box').textContent = buildMsg();
+  show('preview');
+}
+
+async function postar() {
+  const btn = document.getElementById('btn-send');
+  btn.textContent = 'Enviando...';
+  btn.disabled = true;
+  const imagem = document.getElementById('img-preview').src;
+  const temImagem = !document.getElementById('img-preview').classList.contains('hidden');
+  try {
+    const res = await fetch(WEBHOOK_POST, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: buildMsg(), imagem: temImagem ? imagem : '' })
+    });
+    if (res.ok) { show('sucesso'); }
+    else { throw new Error('Status ' + res.status); }
+  } catch(e) {
+    document.getElementById('err-msg').textContent = e.message;
+    show('erro');
+  }
+  btn.textContent = '✅ Postar no Telegram';
+  btn.disabled = false;
+}
+
+function reset() {
+  ['url','nome','precoOrig','precoAtual','linkAfiliado','extra'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('img-preview').classList.add('hidden');
+  document.getElementById('img-preview').src = '';
+  show('input');
+}
+</script>
+</body>
+</html>
