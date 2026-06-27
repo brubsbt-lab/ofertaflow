@@ -68,14 +68,24 @@ button:hover{
 id="url"
 placeholder="Cole aqui o link da Dafiti">
 
-<button>
+<button onclick="buscarProduto()">
 
 🔍 Buscar Produto
 
 </button>
 
 </div>
+<script>
 
+async function buscarProduto(){
+
+    const url = document.getElementById("url").value;
+
+    alert("Buscando produto...");
+
+}
+
+</script>
 </body>
 
 </html>
