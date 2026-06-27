@@ -77,13 +77,40 @@ placeholder="Cole aqui o link da Dafiti">
 </div>
 <script>
 
+async function buscarProduto() <script>
+
 async function buscarProduto(){
 
     const url = document.getElementById("url").value;
 
-    alert("Buscando produto...");
+    if(!url){
+        alert("Cole o link do produto.");
+        return;
+    }
+
+    const resposta = await fetch("https://hook.us2.make.com/9h9tic2oo03ftyghkomkjyu90if73i4w",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            url:url
+        })
+
+    });
+
+    const dados = await resposta.json();
+
+    console.log(dados);
+
+    alert(dados.nome);
 
 }
+
+</script>
 
 </script>
 </body>
