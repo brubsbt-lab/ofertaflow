@@ -282,6 +282,9 @@ background:#15803d;
 </div>
 
     <script>
+
+        let produtoAtual = null;
+        
 async function buscarProduto() {
 
     const url = document.getElementById("url").value;
@@ -304,6 +307,14 @@ async function buscarProduto() {
         });
 
         const dados = await resposta.json();
+
+        produtoAtual = {
+            nome: nomeLimpo,
+            precoOriginal: dados.precoOriginal,
+            precoAtual: dados.precoAtual,
+            imagem: dados.imagem,
+            desconto: desconto
+};
 
         let nomeLimpo = dados.nome
             .replace(" - Compre Agora | Dafiti Brasil", "")
@@ -345,6 +356,16 @@ async function buscarProduto() {
         👡 ${nomeLimpo}
         💰 De R$ ${dados.precoOriginal} por apenas R$ ${dados.precoAtual}
         🏃 Aproveite antes que acabe!`;
+
+        produtoAtual = {
+            nome: nomeLimpo,
+            precoOriginal: dados.precoOriginal,
+            precoAtual: dados.precoAtual,
+            imagem: dados.imagem,
+            desconto: desconto,
+            descricao: document.getElementById("descricao").value,
+            url: url
+};
         
     } catch (erro) {
     
@@ -355,7 +376,37 @@ async function buscarProduto() {
 }
         async function publicarTelegram(){
 
-    alert("Publicando...");
+    if(!produtoAtual){
+        alert("Busque um produto primeiro.");
+        return;
+    }
+
+    produtoAtual.descricao =
+        document.getElementById("descricao").value;
+
+    try{
+
+        const resposta = await fetch(
+            "https://hook.us2.make.com/ziofxokbbynercs7pz56qwh1gunhvkml",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(produtoAtual)
+            }
+        );
+
+        if(resposta.ok){
+            alert("✅ Oferta enviada para o Telegram!");
+        }else{
+            alert("Erro ao publicar.");
+        }
+
+    }catch(erro){
+        console.error(erro);
+        alert("Erro ao enviar para o Telegram.");
+    }
 
         }
     </script>
