@@ -338,18 +338,19 @@ async function buscarProduto() {
 
         document.getElementById("desconto").innerHTML =
             "🔥 " + desconto + "% OFF";
-    } catch (erro) {
-    
-        console.error(erro);
-        alert(erro.message);
-    }
-
-    document.getElementById("descricao").value =
+        
+        document.getElementById("descricao").value =
 
         `🔥 OFERTA
         👡 ${nomeLimpo}
         💰 De R$ ${dados.precoOriginal} por apenas R$ ${dados.precoAtual}
         🏃 Aproveite antes que acabe!`;
+        
+    } catch (erro) {
+    
+        console.error(erro);
+        alert(erro.message);
+    }
 
 }
         async function publicarTelegram(){
