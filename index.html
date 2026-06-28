@@ -294,7 +294,11 @@ async function buscarProduto() {
 
         const dados = await resposta.json();
 
-        document.getElementById("nome").innerHTML = dados.nome;
+        let nomeLimpo = dados.nome
+            .replace(" - Compre Agora | Dafiti Brasil", "")
+            .trim();
+        
+        document.getElementById("nome").innerHTML = nomeLimpo;
 
         document.getElementById("original").innerHTML =
             "De: R$ " + dados.precoOriginal;
@@ -304,6 +308,16 @@ async function buscarProduto() {
 
         document.getElementById("imagem").src = dados.imagem;
         document.getElementById("imagem").style.display = "block";
+
+const original = parseFloat(dados.precoOriginal);
+const atual = parseFloat(dados.precoAtual);
+
+const desconto = Math.round(
+    ((original - atual) / original) * 100
+);
+
+document.getElementById("desconto").innerHTML =
+    "🔥 " + desconto + "% OFF";
 
     } catch (erro) {
     console.error(erro);
