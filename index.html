@@ -306,8 +306,8 @@ async function buscarProduto() {
         document.getElementById("imagem").style.display = "block";
 
     } catch (erro) {
-        alert("Erro ao buscar o produto.");
-        console.error(erro);
+    console.error(erro);
+    alert(erro.message);
     }
 }
     </script>
