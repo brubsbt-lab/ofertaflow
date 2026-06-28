@@ -306,6 +306,10 @@ async function buscarProduto() {
             })
         });
 
+        let nomeLimpo = dados.nome
+            .replace(" - Compre Agora | Dafiti Brasil", "")
+            .trim();
+        
         const dados = await resposta.json();
 
         produtoAtual = {
@@ -315,10 +319,6 @@ async function buscarProduto() {
             imagem: dados.imagem,
             desconto: desconto
 };
-
-        let nomeLimpo = dados.nome
-            .replace(" - Compre Agora | Dafiti Brasil", "")
-            .trim();
         
         document.getElementById("nome").innerHTML = nomeLimpo;
 
