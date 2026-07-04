@@ -195,6 +195,8 @@ function atualizarListaProdutos(){
                 </button>
                 `;
         });
+        document.getElementById("tituloFila").innerHTML =
+                `📦 Produtos carregados (${produtos.length})`;
 }
 
 function removerProduto(index){
