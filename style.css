@@ -1,3 +1,15 @@
+#listaProdutos{
+    margin-top:20px;
+}
+
+.produto-item{
+    padding:10px;
+    margin-bottom:8px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    background:#fafafa;
+}
+
 body{
     background:#eef2f7;
     font-family:Arial;
