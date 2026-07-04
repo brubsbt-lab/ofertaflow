@@ -173,7 +173,7 @@ function atualizarListaProdutos(){
                 <div class="produto-item ${
                         index === indiceSelecionado ? "selecionado" : ""
                 }">
-                <strong>${produto.nome}</strong>
+                <strong>${index + 1}º</strong> - ${produto.nome}
                 <br>
                 🔥 ${produto.desconto}% OFF
                 <br><br>
