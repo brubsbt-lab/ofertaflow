@@ -115,6 +115,13 @@ function removerProduto(index){
         atualizarListaProdutos();
 }
 
+function moverParaCima(index){
+        if(index === 0) return;
+        [produtos[index-1], produtos[index]] =
+                [produtos[index], produtos[index-1]];
+        atualizarListaProdutos();
+}
+
 async function publicarTelegram(){
 
     if(!produtoAtual){
