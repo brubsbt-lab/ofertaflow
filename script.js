@@ -1,6 +1,8 @@
 let produtoAtual = null;
 
 let produtos = [];
+
+const MODO_DESENVOLVIMENTO = true;
         
 async function buscarProduto() {
 
