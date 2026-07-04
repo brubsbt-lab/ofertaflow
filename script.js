@@ -13,8 +13,6 @@ async function buscarProduto() {
 
         produtos = [];
 
-const url = urls[0];
-
     if (!url) {
         alert("Cole o link do produto.");
         return;
