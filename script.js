@@ -104,6 +104,12 @@ function atualizarListaProdutos(){
         });
 }
 
+function removerProduto(index){
+        produtos.splice(index,1);
+        
+        atualizarListaProdutos();
+}
+
 async function publicarTelegram(){
 
     if(!produtoAtual){
