@@ -3,6 +3,13 @@ let produtoAtual = null;
 let produtos = [];
 
 const MODO_DESENVOLVIMENTO = true;
+
+const produtoTeste = {
+        nome: "Sandália Feminina Santa Lolla Salto Bloco Caramelo",
+        precoOriginal: "199.90",
+        precoAtual: "104.99",
+        imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
+};
         
 async function buscarProduto() {
 
