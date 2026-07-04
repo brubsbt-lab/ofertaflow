@@ -139,7 +139,11 @@ async function buscarProduto() {
                                 desconto: desconto
                         };
                         produtos.push(produtoAtual);
+                        
+                        renderizarProduto(produtoAtual);
+                        
                         atualizarListaProdutos();
+                        
                 } catch (erro) {
                         console.error(erro);
                 }
