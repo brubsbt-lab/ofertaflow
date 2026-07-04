@@ -270,3 +270,12 @@ async function publicarTelegram(){
         alert("Erro ao enviar para o Telegram.");
     }
 }
+
+async function publicarProximo(){
+        if(produtos.length === 0){
+                alert("Fila vazia.");
+                return;
+        }
+        selecionarProduto(0);
+        await publicarTelegram();
+}
