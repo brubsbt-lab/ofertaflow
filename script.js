@@ -14,8 +14,6 @@ async function buscarProduto() {
 produtos = [];        
         
 for (const url of urls) {
-
-        alert(`${produtos.length} produto(s) encontrado(s)!`);
         
     if (!url) {
         alert("Cole o link do produto.");
@@ -91,6 +89,8 @@ for (const url of urls) {
     }
 
 }
+
+alert(`${produtos.length} produto(s) encontrado(s)!`);
 
 async function publicarTelegram(){
 
