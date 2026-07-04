@@ -122,6 +122,13 @@ function moverParaCima(index){
         atualizarListaProdutos();
 }
 
+function moverParaBaixo(index){
+        if(index === produtos.length-1) return;
+        [produtos[index], produtos[index+1]] =
+                [produtos[index+1], produtos[index]];
+        atualizarListaProdutos();
+}
+
 async function publicarTelegram(){
 
     if(!produtoAtual){
