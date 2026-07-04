@@ -1,74 +1,59 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>OfertaFlow</title>
-
-    <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-
-<div class="container">
-
-    <h1>🛍 OfertaFlow</h1>
-
-    <p class="subtitle">
-        Busque um produto e publique no Telegram.
-    </p>
-
-    <textarea
-    id="url"
-    rows="6"
-    placeholder="Cole um ou mais links (um por linha)"></textarea>
-
-    <button onclick="buscarProduto()">
-
-        🔍 Buscar Produto
-
-    </button>
-
-    <div id="produto" class="card">
-
-        <img
-            id="imagem"
-            src=""
-            style="display:none;">
-
-        <h2 id="nome">
-            Nenhum produto carregado
-        </h2>
-
-        <div class="precos">
-
-            <span id="original"></span>
-
-            <span id="atual"></span>
-
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>OfertaFlow</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    
+    <body>
+        <div class="container">
+            <h1>🛍 OfertaFlow</h1>
+            
+            <p class="subtitle">
+                Busque um produto e publique no Telegram.
+            </p>
+            
+            <textarea
+                id="url"
+                rows="6"
+                placeholder="Cole um ou mais links (um por linha)"></textarea>
+            
+            <button onclick="buscarProduto()">
+                🔍 Buscar Produto
+            </button>
+            
+            <div id="produto" class="card">
+                <img
+                    id="imagem"
+                    src=""
+                    style="display:none;">
+                <h2 id="nome">
+                    Nenhum produto carregado
+                </h2>
+                
+                <div class="precos">
+                    <span id="original"></span>
+                    <span id="atual"></span>
+                </div>
+                
+                <div id="desconto" class="desconto"></div>
+                
+                <textarea
+                    id="descricao"
+                    placeholder="Digite uma descrição..."></textarea>
+                
+                <button
+                    id="btnTelegram"
+                    class="telegram"
+                    onclick="publicarTelegram()">
+                    🚀 Publicar Telegram
+                </button>
+            </div>
         </div>
-
-        <div id="desconto" class="desconto"></div>
-
-        <textarea
-            id="descricao"
-            placeholder="Digite uma descrição..."></textarea>
-
-        <button
-    id="btnTelegram"
-    class="telegram"
-    onclick="publicarTelegram()">
-
-            🚀 Publicar Telegram
-
-        </button>
-
-    </div>
-
-</div>
-    <script src="script.js"></script>
-</body>
-
+        
+        <script src="script.js"></script>
+    </body>
 </html>
