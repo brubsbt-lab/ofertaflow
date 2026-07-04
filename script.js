@@ -28,19 +28,25 @@ async function buscarProduto() {
                         return;
                 }
                 try {
-                        const resposta = await fetch(
-                                "https://hook.us2.make.com/9h9tic2oo03ftyghkomkjyu90if73i4w",
-                                {
-                                        method: "POST",
-                                        headers: {
-                                                "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify({
-                                                url: url
-                                        })
-                                }
-                        );
-                        const dados = await resposta.json();
+                        let dados;
+                        if (MODO_DESENVOLVIMENTO) {
+                                dados = produtoTeste;
+                        } else {
+                                const resposta = await fetch(
+                                        "https://hook.us2.make.com/9h9tic2oo03ftyghkomkjyu90if73i4w",
+                                        {
+                                                method: "POST",
+                                                headers: {
+                                                        "Content-Type": "application/json"
+                                                },
+                                                
+                                                body: JSON.stringify({
+                                                        url: url
+                                                })
+                                        }
+                                );
+                                dados = await resposta.json();
+                        }
                         const nomeLimpo = dados.nome
                                 .replace(" - Compre Agora | Dafiti Brasil", "")
                                 .trim();
