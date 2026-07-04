@@ -206,19 +206,27 @@ function removerProduto(index){
 }
 
 function moverParaCima(index){
+        if(index === 0) return;
+        [produtos[index - 1], produtos[index]] =
+                [produtos[index], produtos[index - 1]];
         if (indiceSelecionado === index) {
                 indiceSelecionado--;
         } else if (indiceSelecionado === index - 1) {
                 indiceSelecionado++;
         }
+        atualizarListaProdutos();
 }
 
 function moverParaBaixo(index){
+        if(index === produtos.length - 1) return;
+        [produtos[index], produtos[index + 1]] =
+                [produtos[index + 1], produtos[index]];
         if (indiceSelecionado === index) {
                 indiceSelecionado++;
         } else if (indiceSelecionado === index + 1) {
                 indiceSelecionado--;
         }
+        atualizarListaProdutos();
 }
 
 function selecionarProduto(index){
