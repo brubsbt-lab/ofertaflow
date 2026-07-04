@@ -4,12 +4,38 @@ let produtos = [];
 
 const MODO_DESENVOLVIMENTO = true;
 
-const produtoTeste = {
-        nome: "Sandália Feminina Santa Lolla Salto Bloco Caramelo",
-        precoOriginal: "199.90",
-        precoAtual: "104.99",
-        imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
-};
+const produtosTeste = [
+        {
+                nome: "Sandália Feminina Santa Lolla Salto Bloco Caramelo",
+                precoOriginal: "199.90",
+                precoAtual: "104.99",
+                imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
+        },
+        {
+                nome: "Scarpin Schutz Verniz Preto",
+                precoOriginal: "359.90",
+                precoAtual: "179.90",
+                imagem: "https://via.placeholder.com/400x400?text=Schutz"
+        },
+        {
+                nome: "Tênis Jorge Bischoff Croco Off White",
+                precoOriginal: "499.90",
+                precoAtual: "249.90",
+                imagem: "https://via.placeholder.com/400x400?text=Jorge+Bischoff"
+        },
+        {
+                nome: "Bota Arezzo Cano Curto",
+                precoOriginal: "699.90",
+                precoAtual: "349.90",
+                imagem: "https://via.placeholder.com/400x400?text=Arezzo"
+        },
+        {
+                nome: "Sandália Via Marte Nude",
+                precoOriginal: "189.90",
+                precoAtual: "99.90",
+                imagem: "https://via.placeholder.com/400x400?text=Via+Marte"
+        }
+];
         
 async function buscarProduto() {
 
