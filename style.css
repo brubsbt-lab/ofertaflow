@@ -1,3 +1,9 @@
+.produto-item button{
+    margin:3px;
+    padding:6px 10px;
+    cursor:pointer;
+}
+
 #listaProdutos{
     margin-top:20px;
 }
