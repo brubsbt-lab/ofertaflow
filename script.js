@@ -260,15 +260,13 @@ async function publicarTelegram(){
         );
 
         if(resposta.ok){
-            alert("✅ Oferta enviada para o Telegram!");
+                return true;
         }else{
-            alert("Erro ao publicar.");
+                return false;
         }
-
     }catch(erro){
         console.error(erro);
-        alert("Erro ao enviar para o Telegram.");
-    }
+        return false;
 }
 
 async function publicarProximo(){
@@ -277,5 +275,19 @@ async function publicarProximo(){
                 return;
         }
         selecionarProduto(0);
-        await publicarTelegram();
+        const publicado = await publicarTelegram();
+        if(publicado){
+                produtos.shift();
+                if(produtos.length > 0){
+                        selecionarProduto(0);
+                }else{
+                        produtoAtual = null;
+                        indiceSelecionado = -1;
+                        atualizarListaProdutos();
+                }
+                atualizarListaProdutos();
+                alert("✅ Produto publicado!");
+        }else{
+                alert("Erro ao publicar.");
+        }
 }
