@@ -154,6 +154,11 @@ async function buscarProduto() {
                         console.error(erro);
                 }
         }
+        if(produtos.length > 0){
+
+    selecionarProduto(0);
+
+        }
         alert(`${produtos.length} produto(s) encontrado(s)!`);
 }
 
