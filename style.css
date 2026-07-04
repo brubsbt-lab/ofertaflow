@@ -129,3 +129,8 @@ textarea{
 .telegram:hover{
     background:#15803d;
 }
+
+.selecionado{
+    border:2px solid #28a745;
+    background:#eaf8ee;
+}
