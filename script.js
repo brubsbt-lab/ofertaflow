@@ -2,7 +2,14 @@ let produtoAtual = null;
         
 async function buscarProduto() {
 
-    const url = document.getElementById("url").value;
+    const urls = document
+    .getElementById("url")
+    .value
+    .split("\n")
+    .map(l => l.trim())
+    .filter(l => l !== "");
+
+const url = urls[0];
 
     if (!url) {
         alert("Cole o link do produto.");
