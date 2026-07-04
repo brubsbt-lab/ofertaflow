@@ -75,6 +75,7 @@ async function buscarProduto() {
                                 desconto: desconto
                         };
                         produtos.push(produtoAtual);
+                        atualizarListaProdutos();
                 } catch (erro) {
                         console.error(erro);
                 }
