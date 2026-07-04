@@ -164,15 +164,19 @@ function atualizarListaProdutos(){
                 <br>
                 🔥 ${produto.desconto}% OFF
                 <br><br>
+                
                 <button onclick="selecionarProduto(${index})">
                 👁️ Selecionar
                 </button>
+                
                 <button onclick="moverParaCima(${index})">
                 ⬆️
                 </button>
+                
                 <button onclick="moverParaBaixo(${index})">
                 ⬇️
                 </button>
+                
                 <button onclick="removerProduto(${index})">
                 ❌
                 </button>
@@ -198,6 +202,11 @@ function moverParaBaixo(index){
         [produtos[index], produtos[index+1]] =
                 [produtos[index+1], produtos[index]];
         atualizarListaProdutos();
+}
+
+function selecionarProduto(index){
+        produtoAtual = produtos[index];
+        renderizarProduto(produtoAtual);
 }
 
 function selecionarProduto(index){
