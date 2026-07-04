@@ -214,10 +214,11 @@ function moverParaCima(index){
 }
 
 function moverParaBaixo(index){
-        if(index === produtos.length-1) return;
-        [produtos[index], produtos[index+1]] =
-                [produtos[index+1], produtos[index]];
-        atualizarListaProdutos();
+        if (indiceSelecionado === index) {
+                indiceSelecionado++;
+        } else if (indiceSelecionado === index + 1) {
+                indiceSelecionado--;
+        }
 }
 
 function selecionarProduto(index){
