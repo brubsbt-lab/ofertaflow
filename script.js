@@ -78,13 +78,15 @@ ${url}
 🏃 Aproveite antes que acabe!`;
 
         produtoAtual = {
-            url: url,
-            nome: nomeLimpo,
-            precoOriginal: dados.precoOriginal,
-            precoAtual: dados.precoAtual,
-            imagem: dados.imagem,
-            desconto: desconto
-        };
+    url: url,
+    nome: nomeLimpo,
+    precoOriginal: dados.precoOriginal,
+    precoAtual: dados.precoAtual,
+    imagem: dados.imagem,
+    desconto: desconto
+};
+
+produtos.push(produtoAtual);
 
     } catch (erro) {
 
