@@ -206,10 +206,11 @@ function removerProduto(index){
 }
 
 function moverParaCima(index){
-        if(index === 0) return;
-        [produtos[index-1], produtos[index]] =
-                [produtos[index], produtos[index-1]];
-        atualizarListaProdutos();
+        if (indiceSelecionado === index) {
+                indiceSelecionado--;
+        } else if (indiceSelecionado === index - 1) {
+                indiceSelecionado++;
+        }
 }
 
 function moverParaBaixo(index){
