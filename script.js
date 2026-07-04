@@ -11,6 +11,8 @@ async function buscarProduto() {
     .map(l => l.trim())
     .filter(l => l !== "");
 
+        produtos = [];
+
 const url = urls[0];
 
     if (!url) {
