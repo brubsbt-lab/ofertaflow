@@ -50,10 +50,9 @@ function renderizarProduto(produto){
         document.getElementById("descricao").value =
                 `🔥 OFERTA
                 
-                ${produto.nome}
+${produto.nome}
                 
                 🔥 ${produto.desconto}% OFF
-                
                 💰 De R$ ${produto.precoOriginal}
                 ✅ Por apenas R$ ${produto.precoAtual}
                 
