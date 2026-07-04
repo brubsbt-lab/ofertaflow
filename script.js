@@ -139,6 +139,9 @@ function atualizarListaProdutos(){
                 <br>
                 🔥 ${produto.desconto}% OFF
                 <br><br>
+                <button onclick="selecionarProduto(${index})">
+                👁️ Selecionar
+                </button>
                 <button onclick="moverParaCima(${index})">
                 ⬆️
                 </button>
