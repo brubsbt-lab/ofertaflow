@@ -56,7 +56,9 @@ async function buscarProduto() {
                 try {
                         let dados;
                         if (MODO_DESENVOLVIMENTO) {
-                                dados = produtoTeste;
+                                dados = produtosTeste[
+                                        produtos.length % produtosTeste.length
+                                        ];
                         } else {
                                 const resposta = await fetch(
                                         "https://hook.us2.make.com/9h9tic2oo03ftyghkomkjyu90if73i4w",
