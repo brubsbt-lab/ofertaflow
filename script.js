@@ -49,12 +49,17 @@ function renderizarProduto(produto){
                 `🔥 ${produto.desconto}% OFF`;
         document.getElementById("descricao").value =
                 `🔥 OFERTA
+                
                 ${produto.nome}
+                
                 🔥 ${produto.desconto}% OFF
+                
                 💰 De R$ ${produto.precoOriginal}
                 ✅ Por apenas R$ ${produto.precoAtual}
+                
                 🛍️ Compre aqui:
                 ${produto.url}
+                
                 🏃 Aproveite antes que acabe!`;
 }
         
