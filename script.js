@@ -11,8 +11,12 @@ async function buscarProduto() {
     .map(l => l.trim())
     .filter(l => l !== "");
 
-        produtos = [];
+produtos = [];        
+        
+for (const url of urls) {
 
+        alert(`${produtos.length} produto(s) encontrado(s)!`);
+        
     if (!url) {
         alert("Cole o link do produto.");
         return;
@@ -61,41 +65,34 @@ async function buscarProduto() {
             `🔥 ${desconto}% OFF`;
 
         document.getElementById("descricao").value =
-`🔥 OFERTA
-
-${nomeLimpo}
-
-🔥 ${desconto}% OFF
-
-💰 De R$ ${dados.precoOriginal}
-✅ Por apenas R$ ${dados.precoAtual}
-
-🛍️ Compre aqui:
-${url}
-
-🏃 Aproveite antes que acabe!`;
+                `🔥 OFERTA
+                ${nomeLimpo}
+                🔥 ${desconto}% OFF
+                💰 De R$ ${dados.precoOriginal}
+                ✅ Por apenas R$ ${dados.precoAtual}
+                🛍️ Compre aqui:
+                ${url}
+                🏃 Aproveite antes que acabe!`;
 
         produtoAtual = {
-    url: url,
-    nome: nomeLimpo,
-    precoOriginal: dados.precoOriginal,
-    precoAtual: dados.precoAtual,
-    imagem: dados.imagem,
-    desconto: desconto
-};
-
-produtos.push(produtoAtual);
+                url: url,
+                nome: nomeLimpo,
+                precoOriginal: dados.precoOriginal,
+                precoAtual: dados.precoAtual,
+                imagem: dados.imagem,
+                desconto: desconto
+        };
+        produtos.push(produtoAtual);
 
     } catch (erro) {
 
         console.error(erro);
-        alert("Erro ao buscar o produto.");
 
     }
 
 }
 
-        async function publicarTelegram(){
+async function publicarTelegram(){
 
     if(!produtoAtual){
         alert("Busque um produto primeiro.");
@@ -129,4 +126,4 @@ produtos.push(produtoAtual);
         alert("Erro ao enviar para o Telegram.");
     }
 
-        }
+}
