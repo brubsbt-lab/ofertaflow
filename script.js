@@ -82,6 +82,23 @@ async function buscarProduto() {
         alert(`${produtos.length} produto(s) encontrado(s)!`);
 }
 
+function atualizarListaProdutos(){
+        const lista =
+                document.getElementById("listaProdutos");
+        
+        lista.innerHTML = "";
+        
+        produtos.forEach(produto => {
+                lista.innerHTML += `
+                <div class="produto-item">
+                ✔ ${produto.nome}
+                <br>
+                🔥 ${produto.desconto}% OFF
+                </div>
+                `;
+        });
+}
+
 async function publicarTelegram(){
 
     if(!produtoAtual){
@@ -115,5 +132,4 @@ async function publicarTelegram(){
         console.error(erro);
         alert("Erro ao enviar para o Telegram.");
     }
-
 }
