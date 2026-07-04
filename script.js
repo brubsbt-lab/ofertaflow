@@ -75,26 +75,7 @@ async function buscarProduto() {
                                 desconto: desconto
                         };
                         produtos.push(produtoAtual);
-                        function atualizarListaProdutos(){
-                                const lista =
-                                        document.getElementById("listaProdutos");
-                                
-                                lista.innerHTML = "";
-                                
-                                produtos.forEach((produto,index)=>{
-                                        lista.innerHTML += `
-                                        <div class="produto-item">
-                                        <strong>${produto.nome}</strong>
-                                        <br>
-                                        🔥 ${produto.desconto}% OFF
-                                        <br><br>
-                                        <button onclick="removerProduto(${index})">
-                                        ❌ Remover
-                                        </button>
-                                        </div>
-                                        `;
-                                });
-                        }
+                        atualizarListaProdutos();
                 } catch (erro) {
                         console.error(erro);
                 }
@@ -108,12 +89,16 @@ function atualizarListaProdutos(){
         
         lista.innerHTML = "";
         
-        produtos.forEach(produto => {
-                lista.innerHTML += `
+        produtos.forEach((produto,index)=>{
+                lista.innerHTML +=`
                 <div class="produto-item">
-                ✔ ${produto.nome}
+                <strong>${produto.nome}</strong>
                 <br>
                 🔥 ${produto.desconto}% OFF
+                <br><br>
+                <button onclick="removerProduto(${index})">
+                ❌ Remover
+                </button>
                 </div>
                 `;
         });
