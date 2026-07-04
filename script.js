@@ -50,19 +50,7 @@ function renderizarProduto(produto){
         document.getElementById("desconto").innerHTML =
                 `🔥 ${produto.desconto}% OFF`;
         document.getElementById("descricao").value =
-                `🔥 OFERTA
-                
-${produto.nome}
-                
-                🔥 ${produto.desconto}% OFF
-                💰 De R$ ${produto.precoOriginal}
-                ✅ Por apenas R$ ${produto.precoAtual}
-                
-                🛍️ Compre aqui:
-                ${produto.url}
-                
-                🏃 Aproveite antes que acabe!`;
-}
+                produto.descricao;
         
 async function buscarProduto() {
 
@@ -142,7 +130,8 @@ async function buscarProduto() {
                                 precoOriginal: dados.precoOriginal,
                                 precoAtual: dados.precoAtual,
                                 imagem: dados.imagem,
-                                desconto: desconto
+                                desconto: desconto,
+                                descricao: document.getElementById("descricao").value
                         };
                         produtos.push(produtoAtual);
                         
