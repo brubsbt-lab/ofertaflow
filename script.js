@@ -96,10 +96,15 @@ function atualizarListaProdutos(){
                 <br>
                 🔥 ${produto.desconto}% OFF
                 <br><br>
-                <button onclick="removerProduto(${index})">
-                ❌ Remover
+                <button onclick="moverParaCima(${index})">
+                ⬆️
                 </button>
-                </div>
+                <button onclick="moverParaBaixo(${index})">
+                ⬇️
+                </button>
+                <button onclick="removerProduto(${index})">
+                ❌
+                </button>
                 `;
         });
 }
