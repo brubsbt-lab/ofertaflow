@@ -36,6 +36,27 @@ const produtosTeste = [
                 imagem: "https://via.placeholder.com/400x400?text=Via+Marte"
         }
 ];
+
+function renderizarProduto(produto){
+        document.getElementById("nome").innerHTML = produto.nome;
+        document.getElementById("original").innerHTML =
+                `De: R$ ${produto.precoOriginal}`;
+        document.getElementById("atual").innerHTML =
+                `Por: R$ ${produto.precoAtual}`;
+        document.getElementById("imagem").src = produto.imagem;
+        document.getElementById("imagem").style.display = "block";
+        document.getElementById("desconto").innerHTML =
+                `🔥 ${produto.desconto}% OFF`;
+        document.getElementById("descricao").value =
+                `🔥 OFERTA
+                ${produto.nome}
+                🔥 ${produto.desconto}% OFF
+                💰 De R$ ${produto.precoOriginal}
+                ✅ Por apenas R$ ${produto.precoAtual}
+                🛍️ Compre aqui:
+                ${produto.url}
+                🏃 Aproveite antes que acabe!`;
+}
         
 async function buscarProduto() {
 
@@ -173,6 +194,11 @@ function moverParaBaixo(index){
         [produtos[index], produtos[index+1]] =
                 [produtos[index+1], produtos[index]];
         atualizarListaProdutos();
+}
+
+function selecionarProduto(index){
+        produtoAtual = produtos[index];
+        renderizarProduto(produtoAtual);
 }
 
 async function publicarTelegram(){
