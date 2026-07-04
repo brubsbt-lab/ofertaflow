@@ -211,13 +211,10 @@ function moverParaBaixo(index){
 }
 
 function selecionarProduto(index){
+        indiceSelecionado = index;
         produtoAtual = produtos[index];
         renderizarProduto(produtoAtual);
-}
-
-function selecionarProduto(index){
-        produtoAtual = produtos[index];
-        renderizarProduto(produtoAtual);
+        atualizarListaProdutos();
 }
 
 async function publicarTelegram(){
