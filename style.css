@@ -4,6 +4,7 @@ body{
     margin:0;
     padding:30px;
 }
+
 .container{
     max-width:700px;
     margin:auto;
@@ -12,15 +13,18 @@ body{
     border-radius:20px;
     box-shadow:0 15px 40px rgba(0,0,0,.08);
 }
+
 h1{
     text-align:center;
     margin-bottom:5px;
 }
+
 .subtitle{
     text-align:center;
     color:#666;
     margin-bottom:30px;
 }
+
 input{
     width:100%;
     padding:16px;
@@ -29,6 +33,7 @@ input{
     font-size:16px;
     box-sizing:border-box;
 }
+
 button{
     width:100%;
     margin-top:15px;
@@ -41,89 +46,57 @@ button{
     cursor:pointer;
     transition:.3s;
 }
+
 button:hover{
     background:#1d4ed8;
 }
+
 .card{
-
-margin-top:35px;
-
-padding:25px;
-
-border:1px solid #eee;
-
-border-radius:18px;
-
+    margin-top:35px;
+    padding:25px;
+    border:1px solid #eee;
+    border-radius:18px;
 }
 
 img{
-
-width:100%;
-
-border-radius:15px;
-
-margin-bottom:20px;
-
+    width:100%;
+    border-radius:15px;
+    margin-bottom:20px;
 }
 
 h2{
-
-margin:10px 0;
-
+    margin:10px 0;
 }
 
 .precos{
-
-display:flex;
-
-flex-direction:column;
-
-gap:8px;
-
-margin-top:20px;
-
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-top:20px;
 }
 
 #original{
-
-font-size:20px;
-
-color:#9ca3af;
-
-text-decoration:line-through;
-
+    font-size:20px;
+    color:#9ca3af;
+    text-decoration:line-through;
 }
 
 #atual{
-
-font-size:34px;
-
-font-weight:bold;
-
-color:#22c55e;
-
+    font-size:34px;
+    font-weight:bold;
+    color:#22c55e;
 }
 
 .desconto{
-
-display:inline-block;
-
-margin-top:15px;
-
-margin-bottom:10px;
-
-padding:8px 18px;
-
-background:#16a34a;
-
-color:white;
-
-font-size:18px;
-
-font-weight:bold;
-
-border-radius:999px;
-
+    display:inline-block;
+    margin-top:15px;
+    margin-bottom:10px;
+    padding:8px 18px;
+    background:#16a34a;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    border-radius:999px;
 }
 
 textarea{
@@ -137,15 +110,10 @@ textarea{
 }
 
 .telegram{
-
-background:#16a34a;
-
-margin-top:20px;
-
+    background:#16a34a;
+    margin-top:20px;
 }
 
 .telegram:hover{
-
-background:#15803d;
-
+    background:#15803d;
 }
