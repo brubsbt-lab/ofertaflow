@@ -165,7 +165,9 @@ function atualizarListaProdutos(){
         
         produtos.forEach((produto,index)=>{
                 lista.innerHTML +=`
-                <div class="produto-item">
+                <div class="produto-item ${
+                        index === indiceSelecionado ? "selecionado" : ""
+                }">
                 <strong>${produto.nome}</strong>
                 <br>
                 🔥 ${produto.desconto}% OFF
