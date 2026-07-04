@@ -1,5 +1,7 @@
 let produtoAtual = null;
 
+let indiceSelecionado = -1;
+
 let produtos = [];
 
 const MODO_DESENVOLVIMENTO = true;
