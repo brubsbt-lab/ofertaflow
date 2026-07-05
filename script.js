@@ -167,8 +167,7 @@ ${url}
                         
                         renderizarProduto(produtoAtual);
                         
-                        atualizarListaProdutos();
-                        atualizarContadorFila();
+                        atualizarInterface();
                         
                 } catch (erro) {
                         console.error(erro);
@@ -225,8 +224,7 @@ function atualizarListaProdutos(){
 function removerProduto(index){
         produtos.splice(index,1);
         
-        atualizarListaProdutos();
-        atualizarContadorFila();
+        atualizarInterface();
 }
 
 function moverParaCima(index){
@@ -238,8 +236,7 @@ function moverParaCima(index){
         } else if (indiceSelecionado === index - 1) {
                 indiceSelecionado++;
         }
-        atualizarListaProdutos();
-        atualizarContadorFila();
+        atualizarInterface();
 }
 
 function moverParaBaixo(index){
@@ -251,8 +248,7 @@ function moverParaBaixo(index){
         } else if (indiceSelecionado === index + 1) {
                 indiceSelecionado--;
         }
-        atualizarListaProdutos();
-        atualizarContadorFila();
+        atualizarInterface();
 }
 
 function selecionarProduto(index){
@@ -260,8 +256,7 @@ function selecionarProduto(index){
         indiceSelecionado = index;
         produtoAtual = produtos[index];
         renderizarProduto(produtoAtual);
-        atualizarListaProdutos();
-        atualizarContadorFila();
+        atualizarInterface();
 }
 
 async function publicarTelegram(){
@@ -319,10 +314,9 @@ async function publicarProximo(){
                 }else{
                         produtoAtual = null;
                         indiceSelecionado = -1;
-                        atualizarListaProdutos();
+                        atualizarInterface();
                 }
-                atualizarListaProdutos();
-                atualizarContadorFila();
+                atualizarInterface();
                 alert("✅ Produto publicado!");
         }else{
                 alert("Erro ao publicar.");
