@@ -53,6 +53,16 @@ function renderizarProduto(produto){
                 produto.descricao;
 };
 
+function salvarDescricaoAtual(){
+        if(
+                indiceSelecionado >= 0 &&
+                produtos[indiceSelecionado]
+        ){
+                produtos[indiceSelecionado].descricao =
+                        document.getElementById("descricao").value;
+        }
+}
+
 function formatarPreco(valor){
         return Number(valor).toLocaleString("pt-BR",{
                 minimumFractionDigits:2,
