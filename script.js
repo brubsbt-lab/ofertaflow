@@ -297,7 +297,7 @@ async function publicarProximo(){
                 alert("Fila vazia.");
                 return;
         }
-        selecionarProduto(0);
+        indiceSelecionado = 0;
         const publicado = await publicarTelegram();
         if(publicado){
                 produtos.shift();
