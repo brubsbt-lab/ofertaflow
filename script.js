@@ -42,9 +42,9 @@ const produtosTeste = [
 function renderizarProduto(produto){
         document.getElementById("nome").innerHTML = produto.nome;
         document.getElementById("original").innerHTML =
-                `De: R$ ${produto.precoOriginal}`;
+                `De: R$ ${formatarPreco(produto.precoOriginal)}`;
         document.getElementById("atual").innerHTML =
-                `Por: R$ ${produto.precoAtual}`;
+                `Por: R$ ${formatarPreco(produto.precoAtual)}`;
         document.getElementById("imagem").src = produto.imagem;
         document.getElementById("imagem").style.display = "block";
         document.getElementById("desconto").innerHTML =
@@ -52,6 +52,13 @@ function renderizarProduto(produto){
         document.getElementById("descricao").value =
                 produto.descricao;
 };
+
+function formatarPreco(valor){
+        return Number(valor).toLocaleString("pt-BR",{
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+        });
+}
         
 async function buscarProduto() {
 
@@ -98,10 +105,10 @@ async function buscarProduto() {
                         document.getElementById("nome").innerHTML = nomeLimpo;
                         
                         document.getElementById("original").innerHTML =
-                                `De: R$ ${dados.precoOriginal}`;
+                                `De: R$ ${formatarPreco(dados.precoOriginal)}`;
                         
                         document.getElementById("atual").innerHTML =
-                                `Por: R$ ${dados.precoAtual}`;
+                                `Por: R$ ${formatarPreco(dados.precoAtual)}`;
                         
                         document.getElementById("imagem").src = dados.imagem;
                         document.getElementById("imagem").style.display = "block";
