@@ -253,14 +253,13 @@ function selecionarProduto(index){
 }
 
 async function publicarTelegram(){
-
-    if(!produtoAtual){
-        alert("Busque um produto primeiro.");
-        return;
-    }
-
-    produtoAtual.descricao =
-        document.getElementById("descricao").value;
+        if(indiceSelecionado < 0){
+                alert("Busque um produto primeiro.");
+                return;
+        }
+        const produto = produtos[indiceSelecionado];
+        produto.descricao =
+                document.getElementById("descricao").value;
         
         if (MODO_DESENVOLVIMENTO) {
                     console.log("📱 Simulação de publicação");
