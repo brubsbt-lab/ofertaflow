@@ -178,7 +178,6 @@ ${url}
 
     selecionarProduto(0);
         }
-        totalFila = produtos.length;
         publicados = 0;
         
         atualizarProgresso();
@@ -331,6 +330,7 @@ async function publicarProximo(){
 }
 
 function atualizarContadorFila(){
+        totalFila = produtos.length;
         document.getElementById("contadorFila").innerHTML =
                 `📦 Fila: ${produtos.length} produto${produtos.length !== 1 ? "s" : ""}`;
 }
