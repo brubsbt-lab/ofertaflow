@@ -328,3 +328,12 @@ function atualizarContadorFila(){
         document.getElementById("contadorFila").innerHTML =
                 `📦 Fila: ${produtos.length} produto${produtos.length !== 1 ? "s" : ""}`;
 }
+
+function atualizarProgresso(){
+        document.getElementById("barraProgresso").max =
+                totalFila;
+        document.getElementById("barraProgresso").value =
+                publicados;
+        document.getElementById("progressoTexto").innerHTML =
+                `${publicados} de ${totalFila} publicados`;
+}
