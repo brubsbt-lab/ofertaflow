@@ -342,3 +342,11 @@ function atualizarInterface(){
         atualizarListaProdutos();
         atualizarContadorFila();
 }
+
+function atualizarResumo(){
+        document.getElementById("resumoFila").innerHTML = `
+        Produtos na fila: <b>${produtos.length}</b><br>
+        Publicados: <b>${publicados}</b><br>
+        Restantes: <b>${produtos.length}</b>
+        `;
+}
