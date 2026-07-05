@@ -164,6 +164,7 @@ ${url}
                         renderizarProduto(produtoAtual);
                         
                         atualizarListaProdutos();
+                        atualizarContadorFila();
                         
                 } catch (erro) {
                         console.error(erro);
@@ -218,6 +219,7 @@ function removerProduto(index){
         produtos.splice(index,1);
         
         atualizarListaProdutos();
+        atualizarContadorFila();
 }
 
 function moverParaCima(index){
@@ -230,6 +232,7 @@ function moverParaCima(index){
                 indiceSelecionado++;
         }
         atualizarListaProdutos();
+        atualizarContadorFila();
 }
 
 function moverParaBaixo(index){
@@ -242,6 +245,7 @@ function moverParaBaixo(index){
                 indiceSelecionado--;
         }
         atualizarListaProdutos();
+        atualizarContadorFila();
 }
 
 function selecionarProduto(index){
@@ -250,6 +254,7 @@ function selecionarProduto(index){
         produtoAtual = produtos[index];
         renderizarProduto(produtoAtual);
         atualizarListaProdutos();
+        atualizarContadorFila();
 }
 
 async function publicarTelegram(){
@@ -308,6 +313,7 @@ async function publicarProximo(){
                         atualizarListaProdutos();
                 }
                 atualizarListaProdutos();
+                atualizarContadorFila();
                 alert("✅ Produto publicado!");
         }else{
                 alert("Erro ao publicar.");
