@@ -341,6 +341,7 @@ function atualizarProgresso(){
 function atualizarInterface(){
         atualizarListaProdutos();
         atualizarContadorFila();
+        atualizarResumo();
 }
 
 function atualizarResumo(){
