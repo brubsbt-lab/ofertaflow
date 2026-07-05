@@ -313,3 +313,8 @@ async function publicarProximo(){
                 alert("Erro ao publicar.");
         }
 }
+
+function atualizarContadorFila(){
+        document.getElementById("contadorFila").innerHTML =
+                `📦 Fila: ${produtos.length} produto${produtos.length !== 1 ? "s" : ""}`;
+}
