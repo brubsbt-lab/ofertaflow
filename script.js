@@ -265,6 +265,7 @@ async function publicarTelegram(){
     }catch(erro){
         console.error(erro);
         return false;
+    }
 }
 
 async function publicarProximo(){
