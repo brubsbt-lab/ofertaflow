@@ -243,9 +243,15 @@ async function publicarTelegram(){
 
     produtoAtual.descricao =
         document.getElementById("descricao").value;
+        
+        if (MODO_DESENVOLVIMENTO) {
+                    console.log("📱 Simulação de publicação");
+                    console.log(produtoAtual);
+                    alert("🧪 Modo Desenvolvimento\n\nPublicação simulada com sucesso!");
+                    return true;
+        }
 
     try{
-
         const resposta = await fetch(
             "https://hook.us2.make.com/ziofxokbbynercs7pz56qwh1gunhvkml",
             {
