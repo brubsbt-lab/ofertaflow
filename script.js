@@ -263,7 +263,7 @@ async function publicarTelegram(){
         
         if (MODO_DESENVOLVIMENTO) {
                     console.log("📱 Simulação de publicação");
-                    console.log(produtoAtual);
+                    console.log(produto);;
                     alert("🧪 Modo Desenvolvimento\n\nPublicação simulada com sucesso!");
                     return true;
         }
@@ -276,7 +276,7 @@ async function publicarTelegram(){
                 headers:{
                     "Content-Type":"application/json"
                 },
-                body:JSON.stringify(produtoAtual)
+                body: JSON.stringify(produto)
             }
         );
 
