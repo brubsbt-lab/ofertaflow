@@ -177,8 +177,12 @@ ${url}
         if(produtos.length > 0){
 
     selecionarProduto(0);
-
         }
+        totalFila = produtos.length;
+        publicados = 0;
+        
+        atualizarProgresso();
+        
         alert(`${produtos.length} produto(s) encontrado(s)!`);
 }
 
@@ -309,6 +313,8 @@ async function publicarProximo(){
         const publicado = await publicarTelegram();
         if(publicado){
                 produtos.shift();
+                publicados++;
+                atualizarProgresso();
                 if(produtos.length > 0){
                         selecionarProduto(0);
                 }else{
