@@ -343,3 +343,8 @@ function atualizarProgresso(){
         document.getElementById("progressoTexto").innerHTML =
                 `${publicados} de ${totalFila} publicados`;
 }
+
+function atualizarInterface(){
+        atualizarListaProdutos();
+        atualizarContadorFila();
+}
