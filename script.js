@@ -1,5 +1,9 @@
 let produtoAtual = null;
 
+let totalFila = 0;
+
+let publicados = 0;
+
 let indiceSelecionado = -1;
 
 let produtos = [];
