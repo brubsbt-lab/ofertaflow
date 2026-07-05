@@ -51,6 +51,7 @@ function renderizarProduto(produto){
                 `🔥 ${produto.desconto}% OFF`;
         document.getElementById("descricao").value =
                 produto.descricao;
+};
         
 async function buscarProduto() {
 
@@ -114,15 +115,22 @@ async function buscarProduto() {
                         document.getElementById("desconto").innerHTML =
                                 `🔥 ${desconto}% OFF`;
                         
-                        document.getElementById("descricao").value =
-                                `🔥 OFERTA
-                                ${nomeLimpo}
-                                🔥 ${desconto}% OFF
-                                💰 De R$ ${dados.precoOriginal}
-                                ✅ Por apenas R$ ${dados.precoAtual}
-                                🛍️ Compre aqui:
-                                ${url}
-                                🏃 Aproveite antes que acabe!`;
+                        const descricaoPadrao =
+`🔥 OFERTA
+
+${nomeLimpo}
+
+🔥 ${desconto}% OFF
+
+💰 De R$ ${dados.precoOriginal}
+✅ Por apenas R$ ${dados.precoAtual}
+
+🛍️ Compre aqui:
+${url}
+
+🏃 Aproveite antes que acabe!`;
+
+                        document.getElementById("descricao").value = descricaoPadrao;
                         
                         produtoAtual = {
                                 url: url,
@@ -131,7 +139,7 @@ async function buscarProduto() {
                                 precoAtual: dados.precoAtual,
                                 imagem: dados.imagem,
                                 desconto: desconto,
-                                descricao: document.getElementById("descricao").value
+                                descricao: descricaoPadrao
                         };
                         produtos.push(produtoAtual);
                         
