@@ -141,6 +141,7 @@ ${url}
                                 desconto: desconto,
                                 descricao: descricaoPadrao
                         };
+                        
                         produtos.push(produtoAtual);
                         
                         renderizarProduto(produtoAtual);
