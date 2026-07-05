@@ -245,6 +245,7 @@ function moverParaBaixo(index){
 }
 
 function selecionarProduto(index){
+        salvarDescricaoAtual();
         indiceSelecionado = index;
         produtoAtual = produtos[index];
         renderizarProduto(produtoAtual);
