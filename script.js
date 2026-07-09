@@ -204,6 +204,8 @@ ${url}
 
         document.getElementById("statusBusca").style.display = "none";
         
+        liberarInterface();
+        
         alert(`${produtos.length} produto(s) encontrado(s)!`);
 }
 
