@@ -247,6 +247,11 @@ function atualizarListaProdutos(){
 }
 
 function removerProduto(index){
+
+        if(!confirm("Deseja realmente remover este produto da fila?")){
+                return;
+        }
+        
         produtos.splice(index,1);
         
         atualizarInterface();
@@ -383,7 +388,7 @@ function atualizarInterface(){
         atualizarProximoProduto();
         atualizarEstatisticasDesconto();
         atualizarTempoEstimado();
-        //salvarFila();
+        salvarFila();
 }
 
 function atualizarResumo(){
@@ -490,4 +495,4 @@ function carregarFila(){
                 selecionarProduto(0);
         }
 }
-//carregarFila();
+carregarFila();
