@@ -466,3 +466,16 @@ function salvarFila(){
                 JSON.stringify(produtos)
         );
 }
+
+function carregarFila(){
+        const filaSalva =
+                localStorage.getItem("filaOfertaFlow");
+        if(!filaSalva){
+                return;
+        }
+        produtos = JSON.parse(filaSalva);
+        atualizarInterface();
+        if(produtos.length > 0){
+                selecionarProduto(0);
+        }
+}
