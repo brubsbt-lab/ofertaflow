@@ -383,7 +383,7 @@ function atualizarInterface(){
         atualizarProximoProduto();
         atualizarEstatisticasDesconto();
         atualizarTempoEstimado();
-        salvarFila();
+        //salvarFila();
 }
 
 function atualizarResumo(){
