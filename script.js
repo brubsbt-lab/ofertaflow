@@ -383,6 +383,7 @@ function atualizarInterface(){
         atualizarProximoProduto();
         atualizarEstatisticasDesconto();
         atualizarTempoEstimado();
+        salvarFila();
 }
 
 function atualizarResumo(){
@@ -479,3 +480,4 @@ function carregarFila(){
                 selecionarProduto(0);
         }
 }
+carregarFila();
