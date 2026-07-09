@@ -276,6 +276,14 @@ function moverParaBaixo(index){
 function selecionarProduto(index){
         salvarDescricaoAtual();
         indiceSelecionado = index;
+        const itemSelecionado =
+                document.querySelector(".produtoSelecionado");
+        if(itemSelecionado){
+                itemSelecionado.scrollIntoView({
+                        behavior: "smooth",
+                        block: "nearest"
+                });
+        }
         produtoAtual = produtos[index];
         renderizarProduto(produtoAtual);
         atualizarInterface();
