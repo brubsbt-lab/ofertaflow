@@ -250,13 +250,25 @@ function atualizarListaProdutos(){
 
 function removerProduto(index){
 
-        if(!confirm("Deseja realmente remover este produto da fila?")){
-                return;
-        }
-        
-        produtos.splice(index,1);
-        adicionarHistorico(`❌ ${produtos[indice].nome}`);
-        atualizarInterface();
+    if(!confirm("Deseja realmente remover este produto da fila?")){
+        return;
+    }
+
+    const nomeProduto = produtos[index].nome;
+
+    produtos.splice(index,1);
+
+    adicionarHistorico(`❌ ${nomeProduto}`);
+
+    atualizarInterface();
+
+    if(produtos.length > 0){
+        selecionarProduto(0);
+    }else{
+        produtoAtual = null;
+        indiceSelecionado = -1;
+    }
+
 }
 
 function moverParaCima(index){
