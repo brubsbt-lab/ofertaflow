@@ -30,13 +30,14 @@
                 🔍 Buscar Produto
             </button>
 
-            <div id="statusBusca" style="display:none;">
+            <p id="statusBusca"> style="display:none;">
                 ⏳ Buscando produtos...
             </div>
             
-            <div id="produto" class="card">
+            <div id="cardProduto" class="card">
                 <img
                     id="imagem"
+                    alt="Imagem do produto"
                     src=""
                     style="display:none;">
                 
@@ -53,7 +54,7 @@
                 
                 <textarea
                     id="descricao"
-                    placeholder="Digite uma descrição..."></textarea>
+                    placeholder="Descrição da oferta..."></textarea>
                 <button onclick="copiarDescricao()">
                     📋 Copiar descrição
                 </button>
@@ -72,8 +73,9 @@
                 
                 <div class="card">
                     <h3>📜 Histórico da Sessão</h3>
-                    <div id="historicoSessao">
-                        Nenhuma ação ainda.
+                    <div
+                        id="historicoSessao"
+                        class="historico">
                     </div>
 
                 </div>
