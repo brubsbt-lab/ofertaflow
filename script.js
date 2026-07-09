@@ -76,8 +76,6 @@ function formatarPreco(valor){
         
 async function buscarProduto() {
 
-        alert("Entrou na buscarProduto");
-
     const urls = document
     .getElementById("url")
     .value
@@ -104,17 +102,15 @@ async function buscarProduto() {
                         atualizarInterface();
                 }
         } 
-        alert("Vai iniciar o for");
+        bloquearInterface();
         
         for (const url of urls) {
                 if (!url) {
                         alert("Cole o link do produto.");
                         return;
                 }
-                bloquearInterface();
                 document.getElementById("statusBusca").style.display = "block";
                 try {
-                        alert("Entrou no try");
                         let dados;
                         if (MODO_DESENVOLVIMENTO) {
                                 dados = produtosTeste[
@@ -198,7 +194,6 @@ ${url}
                         document.getElementById("statusBusca").style.display = "none";
                 }
         }
-        alert("Terminou o for");
         if(produtos.length > 0){
 
     selecionarProduto(0);
