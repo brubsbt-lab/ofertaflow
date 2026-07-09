@@ -108,6 +108,7 @@ async function buscarProduto() {
                         alert("Cole o link do produto.");
                         return;
                 }
+                document.getElementById("statusBusca").style.display = "block";
                 try {
                         let dados;
                         if (MODO_DESENVOLVIMENTO) {
@@ -189,6 +190,7 @@ ${url}
                         
                 } catch (erro) {
                         console.error(erro);
+                        document.getElementById("statusBusca").style.display = "none";
                 }
         }
         if(produtos.length > 0){
@@ -198,6 +200,8 @@ ${url}
         publicados = 0;
         
         atualizarProgresso();
+
+        document.getElementById("statusBusca").style.display = "none";
         
         alert(`${produtos.length} produto(s) encontrado(s)!`);
 }
