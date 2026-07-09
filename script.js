@@ -293,6 +293,7 @@ function selecionarProduto(index){
 }
 
 async function publicarTelegram(){
+        bloquearInterface();
         if(indiceSelecionado < 0){
                 alert("Busque um produto primeiro.");
                 return;
@@ -305,7 +306,8 @@ async function publicarTelegram(){
                     console.log("📱 Simulação de publicação");
                     console.log(produto);;
                     alert("🧪 Modo Desenvolvimento\n\nPublicação simulada com sucesso!");
-                    return true;
+                    liberarInterface();
+                return true;
         }
 
     try{
@@ -321,13 +323,16 @@ async function publicarTelegram(){
         );
 
         if(resposta.ok){
+                liberarInterface();
                 return true;
         }else{
+                liberarInterface();
                 return false;
         }
     }catch(erro){
         console.error(erro);
-        return false;
+        liberarInterface();
+            return false;
     }
 }
 
