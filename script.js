@@ -1,5 +1,7 @@
 let produtoAtual = null;
 
+let historico = [];
+
 let totalFila = 0;
 
 let publicados = 0;
