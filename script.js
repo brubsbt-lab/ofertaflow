@@ -105,12 +105,13 @@ async function buscarProduto() {
                 }
         } 
         alert("Vai iniciar o for");
-        bloquearInterface();
+        
         for (const url of urls) {
                 if (!url) {
                         alert("Cole o link do produto.");
                         return;
                 }
+                bloquearInterface();
                 document.getElementById("statusBusca").style.display = "block";
                 try {
                         alert("Entrou no try");
