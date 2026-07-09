@@ -76,6 +76,8 @@ function formatarPreco(valor){
         
 async function buscarProduto() {
 
+        alert("Entrou na buscarProduto");
+
     const urls = document
     .getElementById("url")
     .value
