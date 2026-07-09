@@ -342,6 +342,7 @@ function atualizarInterface(){
         atualizarListaProdutos();
         atualizarContadorFila();
         atualizarResumo();
+        atualizarProximoProduto();
 }
 
 function atualizarResumo(){
