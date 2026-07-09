@@ -408,3 +408,22 @@ async function copiarDescricao(){
                 alert("Selecione e copie manualmente (Ctrl+C ou Copiar).");
         }
 }
+
+function atualizarEstatisticasDesconto(){
+        let acima40 = 0;
+        let acima50 = 0;
+        let acima60 = 0;
+        
+        for(const produto of produtos){
+
+        if(produto.desconto >= 40) acima40++;
+        if(produto.desconto >= 50) acima50++;
+        if(produto.desconto >= 60) acima60++;
+        }
+        
+        document.getElementById("estatisticasDesconto").innerHTML = `
+        🔥 40%+: ${acima40}<br>
+        🔥 50%+: ${acima50}<br>
+        🔥 60%+: ${acima60}
+        `;
+}
