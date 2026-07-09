@@ -248,15 +248,15 @@ function atualizarListaProdutos(){
                 `📦 Produtos carregados (${produtos.length})`;
 }
 
-function removerProduto(index){
+function removerProduto(indice){
 
     if(!confirm("Deseja realmente remover este produto da fila?")){
         return;
     }
 
-    const nomeProduto = produtos[index].nome;
+    const nomeProduto = produtos[indice].nome;
 
-    produtos.splice(index,1);
+    produtos.splice(indice,1);
 
     adicionarHistorico(`❌ ${nomeProduto}`);
 
@@ -271,33 +271,33 @@ function removerProduto(index){
 
 }
 
-function moverParaCima(index){
-        if(index === 0) return;
-        [produtos[index - 1], produtos[index]] =
-                [produtos[index], produtos[index - 1]];
-        if (indiceSelecionado === index) {
+function moverParaCima(indice){
+        if(indice === 0) return;
+        [produtos[indice - 1], produtos[indice]] =
+                [produtos[indice], produtos[indice - 1]];
+        if (indiceSelecionado === indice) {
                 indiceSelecionado--;
-        } else if (indiceSelecionado === index - 1) {
+        } else if (indiceSelecionado === indice - 1) {
                 indiceSelecionado++;
         }
         atualizarInterface();
 }
 
-function moverParaBaixo(index){
-        if(index === produtos.length - 1) return;
-        [produtos[index], produtos[index + 1]] =
-                [produtos[index + 1], produtos[index]];
-        if (indiceSelecionado === index) {
+function moverParaBaixo(indice){
+        if(indice === produtos.length - 1) return;
+        [produtos[indice], produtos[indice + 1]] =
+                [produtos[indice + 1], produtos[indice]];
+        if (indiceSelecionado === indice) {
                 indiceSelecionado++;
-        } else if (indiceSelecionado === index + 1) {
+        } else if (indiceSelecionado === indice + 1) {
                 indiceSelecionado--;
         }
         atualizarInterface();
 }
 
-function selecionarProduto(index){
+function selecionarProduto(indice){
         salvarDescricaoAtual();
-        indiceSelecionado = index;
+        indiceSelecionado = indice;
         const itemSelecionado =
                 document.querySelector(".produtoSelecionado");
         if(itemSelecionado){
@@ -306,7 +306,7 @@ function selecionarProduto(index){
                         block: "nearest"
                 });
         }
-        produtoAtual = produtos[index];
+        produtoAtual = produtos[indice];
         renderizarProduto(produtoAtual);
         atualizarInterface();
 }
