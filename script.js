@@ -480,4 +480,4 @@ function carregarFila(){
                 selecionarProduto(0);
         }
 }
-carregarFila();
+//carregarFila();
