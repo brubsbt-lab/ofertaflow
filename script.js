@@ -456,9 +456,19 @@ function atualizarEstatisticasDesconto(){
 }
 
 function bloquearInterface(){
-        
-        document.getElementById("btnBuscar").disabled = true;
-        document.getElementById("btnTelegram").disabled = true;
+
+    if(!document.getElementById("btnBuscar")){
+        alert("btnBuscar não encontrado");
+        return;
+    }
+
+    if(!document.getElementById("btnTelegram")){
+        alert("btnTelegram não encontrado");
+        return;
+    }
+
+    document.getElementById("btnBuscar").disabled = true;
+    document.getElementById("btnTelegram").disabled = true;
 }
 
 function liberarInterface(){
