@@ -108,6 +108,7 @@ async function buscarProduto() {
                         alert("Cole o link do produto.");
                         return;
                 }
+                bloquearInterface();
                 document.getElementById("statusBusca").style.display = "block";
                 try {
                         let dados;
