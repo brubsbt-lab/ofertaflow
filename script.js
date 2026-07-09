@@ -362,3 +362,12 @@ function atualizarProximoProduto(){
         }
         elemento.innerHTML = produtos[0].nome;
 }
+
+function atualizarTempoEstimado(){
+
+    const minutos = produtos.length * 2;
+
+    document.getElementById("tempoEstimado").innerHTML =
+        `⏱ Tempo estimado: ${minutos} min`;
+
+}
