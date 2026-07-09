@@ -363,6 +363,7 @@ async function publicarProximo(){
                 }
                 atualizarInterface();
                 alert("✅ Produto publicado!");
+                adicionarHistorico(`✅ ${produtoAtual.nome}`);
         }else{
                 alert("Erro ao publicar.");
         }
