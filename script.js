@@ -343,6 +343,7 @@ function atualizarInterface(){
         atualizarContadorFila();
         atualizarResumo();
         atualizarProximoProduto();
+        atualizarTempoEstimado();
 }
 
 function atualizarResumo(){
