@@ -440,3 +440,14 @@ function atualizarEstatisticasDesconto(){
         🔥 60%+: ${acima60}
         `;
 }
+
+function bloquearInterface(){
+        
+        document.getElementById("btnBuscar").disabled = true;
+        document.getElementById("btnTelegram").disabled = true;
+}
+
+function liberarInterface(){
+        document.getElementById("btnBuscar").disabled = false;
+        document.getElementById("btnTelegram").disabled = false;
+}
