@@ -83,7 +83,16 @@ async function buscarProduto() {
     .map(l => l.trim())
     .filter(l => l !== "");
         
-        produtos = [];        
+        if(produtos.length > 0){
+                const limpar = confirm(
+                        "Deseja limpar a fila atual?\n\nOK = Limpar\nCancelar = Adicionar à fila"
+                );
+                
+                if(limpar){
+                        produtos = [];
+                        indiceSelecionado = -1;
+                }
+        } 
         
         for (const url of urls) {
                 if (!url) {
