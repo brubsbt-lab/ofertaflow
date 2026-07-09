@@ -255,7 +255,7 @@ function removerProduto(index){
         }
         
         produtos.splice(index,1);
-        
+        adicionarHistorico(`❌ ${produtos[indice].nome}`);
         atualizarInterface();
 }
 
