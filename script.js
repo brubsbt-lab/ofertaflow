@@ -459,3 +459,10 @@ function liberarInterface(){
         document.getElementById("btnBuscar").disabled = false;
         document.getElementById("btnTelegram").disabled = false;
 }
+
+function salvarFila(){
+        localStorage.setItem(
+                "filaOfertaFlow",
+                JSON.stringify(produtos)
+        );
+}
