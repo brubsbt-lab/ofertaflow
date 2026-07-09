@@ -361,6 +361,7 @@ function atualizarInterface(){
         atualizarContadorFila();
         atualizarResumo();
         atualizarProximoProduto();
+        atualizarEstatisticasDesconto();
         atualizarTempoEstimado();
 }
 
