@@ -373,8 +373,20 @@ function atualizarTempoEstimado(){
 }
 
 async function copiarDescricao(){
-        const texto =
-                document.getElementById("descricao").value;
-        await navigator.clipboard.writeText(texto);
-        alert("✅ Descrição copiada!");
+        const textarea = document.getElementById("descricao");
+        try{
+                if(navigator.clipboard && window.isSecureContext){
+                        await navigator.clipboard.writeText(textarea.value);
+                }else{
+                        textarea.select();
+                        textarea.setSelectionRange(0, 999999);
+                        document.execCommand("copy");
+                }
+                alert("✅ Descrição copiada!");
+        }catch(erro){
+                console.error(erro);
+                textarea.select();
+                textarea.setSelectionRange(0, 999999);
+                alert("Selecione e copie manualmente (Ctrl+C ou Copiar).");
+        }
 }
