@@ -89,8 +89,17 @@ async function buscarProduto() {
                 );
                 
                 if(limpar){
+                        const confirmar = confirm(
+                                "⚠️ Você perderá todas as descrições editadas.\n\nDeseja continuar?"
+                        );
+                        if(!confirmar){
+                                return;
+                        }
+                        
                         produtos = [];
                         indiceSelecionado = -1;
+                        publicados = 0;
+                        atualizarInterface();
                 }
         } 
         
