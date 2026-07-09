@@ -497,4 +497,20 @@ function carregarFila(){
                 selecionarProduto(0);
         }
 }
+
+function adicionarHistorico(texto){
+        const agora = new Date();
+
+    const hora =
+        agora.toLocaleTimeString("pt-BR",{
+            hour:"2-digit",
+            minute:"2-digit"
+        });
+
+    historico.unshift(`${hora} - ${texto}`);
+
+    document.getElementById("historicoSessao").innerHTML =
+        historico.join("<br>");
+
+}
 carregarFila();
