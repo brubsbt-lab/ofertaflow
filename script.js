@@ -370,5 +370,11 @@ function atualizarTempoEstimado(){
 
     document.getElementById("tempoEstimado").innerHTML =
         `⏱ Tempo estimado: ${minutos} min`;
+}
 
+async function copiarDescricao(){
+        const texto =
+                document.getElementById("descricao").value;
+        await navigator.clipboard.writeText(texto);
+        alert("✅ Descrição copiada!");
 }
