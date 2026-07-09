@@ -351,3 +351,13 @@ function atualizarResumo(){
         Restantes: <b>${produtos.length}</b>
         `;
 }
+
+function atualizarProximoProduto(){
+        const elemento =
+                document.getElementById("nomeProximo");
+        if(produtos.length === 0){
+                elemento.innerHTML = "Fila vazia";
+                return;
+        }
+        elemento.innerHTML = produtos[0].nome;
+}
