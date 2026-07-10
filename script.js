@@ -407,6 +407,7 @@ function atualizarInterface(){
         atualizarTempoEstimado();
         salvarFila();
         atualizarQualidadeFila();
+        atualizarEconomiaFila();
 }
 
 function atualizarResumo(){
