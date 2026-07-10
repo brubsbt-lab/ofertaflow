@@ -361,8 +361,10 @@ async function publicarProximo(){
                 return;
         }
         indiceSelecionado = 0;
+        const nomePublicado = produtos[0].nome;
         const publicado = await publicarTelegram();
         if(publicado){
+                adicionarHistorico(`✅ ${nomePublicado}`);
                 produtos.shift();
                 publicados++;
                 atualizarProgresso();
@@ -375,7 +377,7 @@ async function publicarProximo(){
                 }
                 atualizarInterface();
                 alert("✅ Produto publicado!");
-                adicionarHistorico(`✅ ${produtoAtual.nome}`);
+                
         }else{
                 alert("Erro ao publicar.");
         }
