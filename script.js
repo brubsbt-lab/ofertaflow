@@ -562,9 +562,9 @@ function atualizarQualidadeFila(){
 
     let qualidade = "";
 
-    if(media >= 60){
+    if(media >= 80){
         qualidade = "🟢 Excelente";
-    }else if(media >= 50){
+    }else if(media >= 60){
         qualidade = "🟡 Boa";
     }else{
         qualidade = "🔴 Regular";
@@ -572,6 +572,20 @@ function atualizarQualidadeFila(){
 
     document.getElementById("qualidadeFila").innerHTML =
         `Qualidade da fila: <b>${qualidade}</b>`;
+}
+
+function atualizarEconomiaFila(){
+
+    let economia = 0;
+
+    for(const produto of produtos){
+        economia +=
+            Number(produto.precoOriginal) -
+            Number(produto.precoAtual);
+    }
+
+    document.getElementById("economiaFila").innerHTML =
+        `💰 Economia total: <b>R$ ${formatarPreco(economia)}</b>`;
 }
 
 carregarFila();
