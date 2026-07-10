@@ -544,4 +544,33 @@ function adicionarHistorico(texto){
         historico.join("<br>");
 
 }
+
+function atualizarQualidadeFila(){
+
+    if(produtos.length === 0){
+        document.getElementById("qualidadeFila").innerHTML =
+            "⚪ Fila vazia";
+        return;
+    }
+
+    const media =
+        produtos.reduce(
+            (soma, produto) => soma + produto.desconto,
+            0
+        ) / produtos.length;
+
+    let qualidade = "";
+
+    if(media >= 60){
+        qualidade = "🟢 Excelente";
+    }else if(media >= 50){
+        qualidade = "🟡 Boa";
+    }else{
+        qualidade = "🔴 Regular";
+    }
+
+    document.getElementById("qualidadeFila").innerHTML =
+        `Qualidade da fila: <b>${qualidade}</b>`;
+}
+
 carregarFila();
