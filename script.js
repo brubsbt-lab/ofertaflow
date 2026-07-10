@@ -409,11 +409,27 @@ function atualizarInterface(){
 }
 
 function atualizarResumo(){
-        document.getElementById("resumoFila").innerHTML = `
-        Produtos na fila: <b>${produtos.length}</b><br>
-        Publicados: <b>${publicados}</b><br>
-        Restantes: <b>${produtos.length}</b>
-        `;
+
+    const total = produtos.length;
+
+    let mediaDesconto = 0;
+
+    if(total > 0){
+        mediaDesconto =
+            Math.round(
+                produtos.reduce(
+                    (soma, produto) => soma + produto.desconto,
+                    0
+                ) / total
+            );
+    }
+
+    document.getElementById("resumoFila").innerHTML = `
+        📦 Produtos: <b>${total}</b><br>
+        ✅ Publicados: <b>${publicados}</b><br>
+        ⏳ Restantes: <b>${total}</b><br>
+        🔥 Desconto médio: <b>${mediaDesconto}%</b>
+    `;
 }
 
 function atualizarProximoProduto(){
