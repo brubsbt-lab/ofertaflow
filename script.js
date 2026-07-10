@@ -408,6 +408,7 @@ function atualizarInterface(){
         salvarFila();
         atualizarQualidadeFila();
         atualizarEconomiaFila();
+        atualizarEstatisticasSessao();
 }
 
 function atualizarResumo(){
@@ -589,4 +590,14 @@ function atualizarEconomiaFila(){
         `💰 Economia total: <b>R$ ${formatarPreco(economia)}</b>`;
 }
 
+function atualizarEstatisticasSessao(){
+
+    document.getElementById("estatisticasSessao").innerHTML = `
+        <br>
+        📊 Resumo da sessão<br>
+        ✅ Publicações: <b>${publicados}</b><br>
+        📦 Produtos restantes: <b>${produtos.length}</b>
+    `;
+
+}
 carregarFila();
