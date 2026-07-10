@@ -406,6 +406,7 @@ function atualizarInterface(){
         atualizarEstatisticasDesconto();
         atualizarTempoEstimado();
         salvarFila();
+        atualizarQualidadeFila();
 }
 
 function atualizarResumo(){
