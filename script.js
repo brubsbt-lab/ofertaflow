@@ -75,6 +75,24 @@ function formatarPreco(valor){
                 maximumFractionDigits:2
         });
 }
+
+function gerarDescricao(produto){
+
+    return `🔥 OFERTA
+
+${produto.nome}
+
+🔥 ${produto.desconto}% OFF
+
+💰 De R$ ${produto.precoOriginal}
+✅ Por apenas R$ ${produto.precoAtual}
+
+🛍️ Compre aqui:
+${produto.url}
+
+🏃 Aproveite antes que acabe!`;
+
+}
         
 async function buscarProduto() {
 
@@ -158,33 +176,17 @@ async function buscarProduto() {
                         document.getElementById("desconto").innerHTML =
                                 `🔥 ${desconto}% OFF`;
                         
-                        const descricaoPadrao =
-`🔥 OFERTA
-
-${nomeLimpo}
-
-🔥 ${desconto}% OFF
-
-💰 De R$ ${dados.precoOriginal}
-✅ Por apenas R$ ${dados.precoAtual}
-
-🛍️ Compre aqui:
-${url}
-
-🏃 Aproveite antes que acabe!`;
-
-                        document.getElementById("descricao").value = descricaoPadrao;
-                        
                         produtoAtual = {
                                 url: url,
                                 nome: nomeLimpo,
                                 precoOriginal: dados.precoOriginal,
                                 precoAtual: dados.precoAtual,
                                 imagem: dados.imagem,
-                                desconto: desconto,
-                                descricao: descricaoPadrao
+                                desconto: desconto
                         };
-                        
+                        produtoAtual.descricao = gerarDescricao(produtoAtual);
+                        document.getElementById("descricao").value =
+                                produtoAtual.descricao;
                         produtos.push(produtoAtual);
                         
                         renderizarProduto(produtoAtual);
