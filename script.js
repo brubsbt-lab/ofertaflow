@@ -76,6 +76,34 @@ const PESO_CATEGORIA = {
 
 const PESO_MARCA_PADRAO = 30; // marca fora da tabela
 
+// OF-019: ícone automático conforme o tipo de calçado, detectado pelo nome do produto
+const ICONE_CATEGORIA = [
+        { termo: "sandália", icone: "👡" },
+        { termo: "sandalia", icone: "👡" },
+        { termo: "anabela", icone: "👡" },
+        { termo: "scarpin", icone: "👠" },
+        { termo: "mule", icone: "👠" },
+        { termo: "salto", icone: "👠" },
+        { termo: "tênis", icone: "👟" },
+        { termo: "tenis", icone: "👟" },
+        { termo: "bota", icone: "👢" },
+        { termo: "sapatilha", icone: "🥿" },
+        { termo: "chinelo", icone: "🩴" },
+        { termo: "rasteira", icone: "🩴" },
+        { termo: "papete", icone: "🩴" }
+];
+const ICONE_CATEGORIA_PADRAO = "👠";
+
+function obterIconeCategoria(nome){
+        const nomeMin = (nome || "").toLowerCase();
+        for(const item of ICONE_CATEGORIA){
+                if(nomeMin.includes(item.termo)){
+                        return item.icone;
+                }
+        }
+        return ICONE_CATEGORIA_PADRAO;
+}
+
 function calcularScore(produto){
         const categoria = CATEGORIA_MARCA[produto.marca];
         const pesoMarca = categoria ? PESO_CATEGORIA[categoria] : PESO_MARCA_PADRAO;
@@ -134,7 +162,8 @@ const produtosTeste = [
 ];
 
 function renderizarProduto(produto){
-        document.getElementById("nome").innerHTML = produto.nome;
+        document.getElementById("nome").innerHTML =
+                `${obterIconeCategoria(produto.nome)} ${produto.nome}`;
         document.getElementById("original").innerHTML =
                 `De: R$ ${formatarPreco(produto.precoOriginal)}`;
         document.getElementById("atual").innerHTML =
@@ -191,7 +220,7 @@ const MODELOS_LEGENDA = [
                 nome: "Padrão",
                 gerar: (p) => `${obterRotuloOferta(p.desconto)}
 
-${p.nome}
+${obterIconeCategoria(p.nome)} ${p.nome}
 
 🔥 ${p.desconto}% OFF
 
@@ -206,7 +235,7 @@ ${p.url}
         {
                 nome: "Direto",
                 gerar: (p) => `${obterRotuloOferta(p.desconto)}
-${p.nome}
+${obterIconeCategoria(p.nome)} ${p.nome}
 
 De R$ ${formatarPreco(p.precoOriginal)} por apenas R$ ${formatarPreco(p.precoAtual)} (${p.desconto}% OFF)
 
@@ -219,7 +248,7 @@ ${p.url}
                 nome: "Emocional",
                 gerar: (p) => `Apaixonada por um look assim? 😍
 
-${p.nome} está com ${p.desconto}% de desconto!
+${obterIconeCategoria(p.nome)} ${p.nome} está com ${p.desconto}% de desconto!
 
 De R$ ${formatarPreco(p.precoOriginal)}
 Por R$ ${formatarPreco(p.precoAtual)}
@@ -231,7 +260,7 @@ ${p.url}`
                 nome: "Destaques",
                 gerar: (p) => `${obterRotuloOferta(p.desconto)}
 
-✔️ ${p.nome}
+✔️ ${obterIconeCategoria(p.nome)} ${p.nome}
 ✔️ ${p.desconto}% de desconto
 ✔️ De R$ ${formatarPreco(p.precoOriginal)} → R$ ${formatarPreco(p.precoAtual)}
 
@@ -277,7 +306,7 @@ function obterOfertaDoDia(){
 function gerarDescricaoOfertaDoDia(produto){
         return `🏆 OFERTA DO DIA 🏆
 
-${produto.nome}
+${obterIconeCategoria(produto.nome)} ${produto.nome}
 
 🔥 ${produto.desconto}% OFF
 
@@ -304,7 +333,7 @@ function atualizarOfertaDoDia(){
         const score = calcularScore(oferta);
 
         elemento.innerHTML = `
-                <strong>${oferta.nome}</strong><br>
+                <strong>${obterIconeCategoria(oferta.nome)} ${oferta.nome}</strong><br>
                 ${oferta.marca ? "🏷️ " + oferta.marca + "<br>" : ""}
                 🔥 ${oferta.desconto}% OFF &nbsp; ⭐ Score: ${score.valor} ${score.rotulo}
         `;
@@ -383,6 +412,14 @@ async function prepararDia(){
                 return;
         }
 
+        let manterAnteriores = false;
+        if(diaPreparado.length > 0){
+                const substituir = confirm(
+                        "Já existe uma fila do dia preparada.\n\nOK = Substituir\nCancelar = Adicionar aos que já foram preparados"
+                );
+                manterAnteriores = !substituir;
+        }
+
         salvarDescricaoAtual();
         bloquearInterface();
         document.getElementById("statusBusca").style.display = "block";
@@ -443,14 +480,23 @@ async function prepararDia(){
                 return;
         }
 
-        const agora = new Date();
-        const agoraMin = agora.getHours() * 60 + agora.getMinutes();
-        const minutoInicioBase = DIA_HORA_INICIO * 60;
         const minutoFimBase = DIA_HORA_FIM * 60;
+        let minutoInicio;
 
-        const minutoInicio = agoraMin > minutoInicioBase
-                ? Math.min(Math.ceil(agoraMin / 5) * 5, minutoFimBase)
-                : minutoInicioBase;
+        if(manterAnteriores && diaPreparado.length > 0){
+                const ultimoItem = diaPreparado[diaPreparado.length - 1];
+                const [h, m] = ultimoItem.horario.split(":").map(Number);
+                const jitter = Math.round((Math.random() * 2 - 1) * DIA_VARIACAO);
+                minutoInicio = Math.min((h * 60 + m) + DIA_INTERVALO_BASE + jitter, minutoFimBase);
+        }else{
+                const agora = new Date();
+                const agoraMin = agora.getHours() * 60 + agora.getMinutes();
+                const minutoInicioBase = DIA_HORA_INICIO * 60;
+
+                minutoInicio = agoraMin > minutoInicioBase
+                        ? Math.min(Math.ceil(agoraMin / 5) * 5, minutoFimBase)
+                        : minutoInicioBase;
+        }
 
         const horariosMin = calcularHorarios(
                 produtosDoDia.length,
@@ -460,12 +506,16 @@ async function prepararDia(){
                 DIA_VARIACAO
         );
 
-        diaPreparado = produtosDoDia.slice(0, horariosMin.length).map((produto, i) => ({
+        const novosItens = produtosDoDia.slice(0, horariosMin.length).map((produto, i) => ({
                 ...produto,
                 horario: minutosParaHora(horariosMin[i])
         }));
 
-        const naoCoube = produtosDoDia.length - diaPreparado.length;
+        diaPreparado = manterAnteriores
+                ? diaPreparado.concat(novosItens)
+                : novosItens;
+
+        const naoCoube = produtosDoDia.length - novosItens.length;
 
         renderizarPreparacaoDia(diaPreparado, naoCoube);
 }
@@ -683,7 +733,7 @@ function atualizarListaProdutos(){
                 <div class="produto-item ${
                         index === indiceSelecionado ? "selecionado" : ""
                 }">
-                <strong>${index + 1}º</strong> - ${produto.nome}
+                <strong>${index + 1}º</strong> - ${obterIconeCategoria(produto.nome)} ${produto.nome}
                 <br>
                 ${obterRotuloOferta(produto.desconto)} - ${produto.desconto}% OFF &nbsp; ⭐ Score: ${score.valor} ${score.rotulo}
                 <br><br>
@@ -909,7 +959,7 @@ async function publicarProximo(){
 }
 
 function atualizarContadorFila(){
-        totalFila = produtos.length;
+        totalFila = produtos.length + publicados;
         document.getElementById("contadorFila").innerHTML =
                 `📦 Fila: ${produtos.length} produto${produtos.length !== 1 ? "s" : ""}`;
 }
@@ -995,7 +1045,7 @@ function atualizarProximoProduto(){
                 elemento.innerHTML = "Fila vazia";
                 return;
         }
-        elemento.innerHTML = produtos[0].nome;
+        elemento.innerHTML = `${obterIconeCategoria(produtos[0].nome)} ${produtos[0].nome}`;
 }
 
 function atualizarTempoEstimado(){
@@ -1026,21 +1076,28 @@ async function copiarDescricao(){
 }
 
 function atualizarEstatisticasDesconto(){
-        let acima40 = 0;
-        let acima50 = 0;
-        let acima60 = 0;
-        
-        for(const produto of produtos){
+        let faixa40 = 0; // 40% a 59%
+        let faixa60 = 0; // 60% a 69%
+        let faixa70 = 0; // 70% a 79%
+        let faixa80 = 0; // 80% ou mais
 
-        if(produto.desconto >= 40) acima40++;
-        if(produto.desconto >= 50) acima50++;
-        if(produto.desconto >= 60) acima60++;
+        for(const produto of produtos){
+                if(produto.desconto >= 80){
+                        faixa80++;
+                }else if(produto.desconto >= 70){
+                        faixa70++;
+                }else if(produto.desconto >= 60){
+                        faixa60++;
+                }else if(produto.desconto >= 40){
+                        faixa40++;
+                }
         }
-        
+
         document.getElementById("estatisticasDesconto").innerHTML = `
-        🔥 40%+: ${acima40}<br>
-        🔥 50%+: ${acima50}<br>
-        🔥 60%+: ${acima60}
+        🔥 40-59%: ${faixa40}<br>
+        💥 60-69%: ${faixa60}<br>
+        🚨 70-79%: ${faixa70}<br>
+        👑 80%+: ${faixa80}
         `;
 }
 
