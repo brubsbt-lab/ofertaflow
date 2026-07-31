@@ -186,7 +186,7 @@ async function buscarProduto() {
                         };
                         produtoAtual.descricao = gerarDescricao(produtoAtual);
                         document.getElementById("descricao").value =
-                                produtoAtual.descricao;
+                                produto.descricao || gerarDescricao(produto);
                         produtos.push(produtoAtual);
                         
                         renderizarProduto(produtoAtual);
