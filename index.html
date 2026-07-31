@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>OfertaFlow</title>
+
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>🛍 OfertaFlow</h1>
+
+            <div class="abas">
+                <button
+                    class="aba-botao ativa"
+                    id="abaBotao-buscar"
+                    onclick="mudarAba('buscar')">
+                    🔍 Buscar
+                </button>
+                <button
+                    class="aba-botao"
+                    id="abaBotao-dia"
+                    onclick="mudarAba('dia')">
+                    📅 Preparar o Dia
+                </button>
+                <button
+                    class="aba-botao"
+                    id="abaBotao-painel"
+                    onclick="mudarAba('painel')">
+                    🎛️ Painel
+                </button>
+            </div>
+
+            <!-- ABA: Buscar & Publicar -->
+            <div id="aba-buscar" class="aba-conteudo">
+
+                <p class="subtitle">
+                    Busque um produto e publique no Telegram.
+                </p>
+
+                <textarea
+                    id="url"
+                    rows="6"
+                    placeholder="Cole um ou mais links (um por linha)"></textarea>
+
+                <button
+                    id="btnBuscar"
+                    onclick="buscarProduto()">
+                    🔍 Buscar Produto
+                </button>
+
+                <button
+                    id="btnPrepararDia"
+                    onclick="prepararDia()">
+                    📅 Preparar o Dia
+                </button>
+
+                <p id="statusBusca" style="display:none;">
+                    ⏳ Buscando produtos...
+                </p>
+
+                <div id="cardProduto" class="card">
+                    <img
+                        id="imagem"
+                        alt="Imagem do produto"
+                        src=""
+                        style="display:none;">
+
+                    <h2 id="nome">
+                        Nenhum produto carregado
+                    </h2>
+
+                    <div class="precos">
+                        <span id="original"></span>
+                        <span id="atual"></span>
+                    </div>
+
+                    <div id="desconto" class="desconto"></div>
+
+                    <div id="scoreOferta"></div>
+
+                    <textarea
+                        id="descricao"
+                        placeholder="Descrição da oferta..."></textarea>
+                    <button onclick="copiarDescricao()">
+                        📋 Copiar descrição
+                    </button>
+
+                    <h3 id="tituloFila">
+                        📦 Produtos carregados (0)
+                    </h3>
+
+                    <div class="card">
+                        <h3>🏆 Oferta do Dia</h3>
+                        <div id="ofertaDoDia"></div>
+                        <button
+                            id="btnPublicarOfertaDoDia"
+                            onclick="publicarOfertaDoDia()">
+                            📤 Publicar Oferta do Dia
+                        </button>
+                    </div>
+
+                    <div id="proximoProduto">
+                        <h3>⏭ Próximo Produto</h3>
+                        <span id="nomeProximo">
+                            Nenhum produto
+                        </span>
+                    </div>
+
+                    <div id="contadorFila">
+                        📦 Fila: 0 produtos
+                    </div>
+
+                    <div id="progressoTexto">
+                        0 de 0 publicados
+                    </div>
+
+                    <progress
+                        id="barraProgresso"
+                        value="0"
+                        max="0">
+                    </progress>
+
+                    <div id="listaProdutos"></div>
+
+                    <button
+                        id="btnTelegram"
+                        class="telegram"
+                        onclick="publicarSelecionado()">
+                        📤 Publicar Telegram
+                    </button>
+
+                    <button
+                        id="btnProximo"
+                        onclick="publicarProximo()">
+                        ⏭ Publicar Próximo
+                    </button>
+                </div>
+            </div>
+
+            <!-- ABA: Preparar o Dia -->
+            <div id="aba-dia" class="aba-conteudo" style="display:none;">
+                <div class="card">
+                    <div id="painelResumo">
+                        <h3>📅 Preparar o Dia</h3>
+                        <div id="resultadoPreparacaoDia"></div>
+                        <div id="listaHorariosDia"></div>
+                        <button
+                            id="btnEnviarDia"
+                            onclick="enviarDiaParaMake()">
+                            📨 Enviar fila do dia
+                        </button>
+                        <div id="resumoFila"></div>
+                        <div id="tempoEstimado"></div>
+                        <div id="estatisticasDesconto"></div>
+                        <div id="qualidadeFila"></div>
+                        <div id="economiaFila"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA: Painel de Controle -->
+            <div id="aba-painel" class="aba-conteudo" style="display:none;">
+                <div class="card">
+                    <h3>🎛️ Painel de Controle</h3>
+                    <div id="painelControle"></div>
+                    <div id="logErros"></div>
+                </div>
+
+                <div class="card">
+                    <h3>📜 Histórico da Sessão</h3>
+                    <div
+                        id="historicoSessao"
+                        class="historico">
+                    </div>
+                    <div id="estatisticasSessao"></div>
+                </div>
+
+                <div class="card">
+                    <h3>📚 Histórico de Publicações</h3>
+                    <div
+                        id="historicoPublicacoes"
+                        class="historico">
+                    </div>
+                    <button onclick="limparHistoricoPublicacoes()">
+                        🗑️ Limpar histórico
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <script src="script.js"></script>
+
+    </body>
+</html>
