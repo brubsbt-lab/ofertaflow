@@ -40,16 +40,18 @@ let historicoPublicacoes = [];
 
 // OF-014: Score da Oferta = 70% desconto + 30% peso da categoria da marca (0-100).
 // Categoria vem da letra final da sua tabela (SS = grife internacional, C = popular).
+// SS e S ficam comentadas por enquanto: o app só trabalha com Dafiti hoje, que não vende essas grifes.
+// Quando expandir pra outro marketplace que venda grife internacional, é só descomentar.
 const CATEGORIA_MARCA = {
-        "Chanel": "SS", "Louis Vuitton": "SS", "Gucci": "SS", "Prada": "SS",
-        "Jimmy Choo": "SS", "Christian Louboutin": "SS", "Balenciaga": "SS",
-        "Saint Laurent": "SS", "Aquazzura": "SS", "Mach & Mach": "SS",
-        "Manolo Blahnik": "SS", "Miu Miu": "SS", "Giuseppe Zanotti": "SS",
-        "Valentino": "SS", "Dolce & Gabbana": "SS", "Fendi": "SS",
-        "Salvatore Ferragamo": "SS",
+        // "Chanel": "SS", "Louis Vuitton": "SS", "Gucci": "SS", "Prada": "SS",
+        // "Jimmy Choo": "SS", "Christian Louboutin": "SS", "Balenciaga": "SS",
+        // "Saint Laurent": "SS", "Aquazzura": "SS", "Mach & Mach": "SS",
+        // "Manolo Blahnik": "SS", "Miu Miu": "SS", "Giuseppe Zanotti": "SS",
+        // "Valentino": "SS", "Dolce & Gabbana": "SS", "Fendi": "SS",
+        // "Salvatore Ferragamo": "SS",
 
-        "Timberland": "S", "Emporio Armani": "S", "Kate Spade": "S",
-        "Zeferino": "S", "Tory Burch": "S", "Michael Kors": "S", "UGG": "S",
+        // "Timberland": "S", "Emporio Armani": "S", "Kate Spade": "S",
+        // "Zeferino": "S", "Tory Burch": "S", "Michael Kors": "S", "UGG": "S",
 
         "Luiza Barcelos": "A", "Carmen Steffens": "A", "Animale": "A",
         "Guess": "A", "Cecconelo": "A", "Carrano": "A", "Arezzo": "A",
@@ -65,8 +67,8 @@ const CATEGORIA_MARCA = {
 };
 
 const PESO_CATEGORIA = {
-        SS: 100,
-        S: 80,
+        // SS: 100,
+        // S: 80,
         A: 60,
         B: 40,
         C: 20
@@ -140,7 +142,7 @@ function renderizarProduto(produto){
         document.getElementById("imagem").src = produto.imagem;
         document.getElementById("imagem").style.display = "block";
         document.getElementById("desconto").innerHTML =
-                `🔥 ${produto.desconto}% OFF`;
+                `${obterRotuloOferta(produto.desconto)} - ${produto.desconto}% OFF`;
         document.getElementById("descricao").value =
                 produto.descricao;
 
@@ -166,22 +168,90 @@ function formatarPreco(valor){
         });
 }
 
-function gerarDescricao(produto){
+// OF-017: rótulo automático da legenda conforme a faixa de desconto
+function obterRotuloOferta(desconto){
+        if(desconto >= 80){
+                return "👑 Oferta Imperdível";
+        }
+        if(desconto >= 70){
+                return "🚨 Oferta Relâmpago";
+        }
+        if(desconto >= 60){
+                return "💥 Super Oferta";
+        }
+        if(desconto >= 40){
+                return "🔥 Oferta";
+        }
+        return "🔥 Oferta";
+}
 
-    return `🔥 OFERTA
+// OF-018: modelos diferentes de legenda
+const MODELOS_LEGENDA = [
+        {
+                nome: "Padrão",
+                gerar: (p) => `${obterRotuloOferta(p.desconto)}
 
-${produto.nome}
+${p.nome}
 
-🔥 ${produto.desconto}% OFF
+🔥 ${p.desconto}% OFF
 
-💰 De R$ ${formatarPreco(produto.precoOriginal)}
-✅ Por apenas R$ ${formatarPreco(produto.precoAtual)}
+💰 De R$ ${formatarPreco(p.precoOriginal)}
+✅ Por apenas R$ ${formatarPreco(p.precoAtual)}
 
 🛍️ Compre aqui:
-${produto.url}
+${p.url}
 
-🏃 Aproveite antes que acabe!`;
+🏃 Aproveite antes que acabe!`
+        },
+        {
+                nome: "Direto",
+                gerar: (p) => `${obterRotuloOferta(p.desconto)}
+${p.nome}
 
+De R$ ${formatarPreco(p.precoOriginal)} por apenas R$ ${formatarPreco(p.precoAtual)} (${p.desconto}% OFF)
+
+👉 Garanta o seu:
+${p.url}
+
+⏰ Estoque limitado!`
+        },
+        {
+                nome: "Emocional",
+                gerar: (p) => `Apaixonada por um look assim? 😍
+
+${p.nome} está com ${p.desconto}% de desconto!
+
+De R$ ${formatarPreco(p.precoOriginal)}
+Por R$ ${formatarPreco(p.precoAtual)}
+
+Corre que é por tempo limitado:
+${p.url}`
+        },
+        {
+                nome: "Destaques",
+                gerar: (p) => `${obterRotuloOferta(p.desconto)}
+
+✔️ ${p.nome}
+✔️ ${p.desconto}% de desconto
+✔️ De R$ ${formatarPreco(p.precoOriginal)} → R$ ${formatarPreco(p.precoAtual)}
+
+📲 ${p.url}`
+        }
+];
+
+let modeloLegendaAtual = localStorage.getItem("modeloLegendaOfertaFlow") || "auto";
+
+function definirModeloLegenda(valor){
+        modeloLegendaAtual = valor;
+        localStorage.setItem("modeloLegendaOfertaFlow", valor);
+}
+
+function gerarDescricao(produto){
+        const indice = modeloLegendaAtual === "auto"
+                ? Math.floor(Math.random() * MODELOS_LEGENDA.length)
+                : parseInt(modeloLegendaAtual);
+
+        return MODELOS_LEGENDA[indice].gerar(produto);
 }
 
 // OF-016: Oferta do Dia = produto com maior Score da Oferta na fila atual
@@ -561,7 +631,7 @@ async function buscarProduto() {
                         );
                         
                         document.getElementById("desconto").innerHTML =
-                                `🔥 ${desconto}% OFF`;
+                                `${obterRotuloOferta(desconto)} - ${desconto}% OFF`;
                         
                         produtoAtual = {
                                 url: url,
@@ -615,7 +685,7 @@ function atualizarListaProdutos(){
                 }">
                 <strong>${index + 1}º</strong> - ${produto.nome}
                 <br>
-                🔥 ${produto.desconto}% OFF &nbsp; ⭐ Score: ${score.valor} ${score.rotulo}
+                ${obterRotuloOferta(produto.desconto)} - ${produto.desconto}% OFF &nbsp; ⭐ Score: ${score.valor} ${score.rotulo}
                 <br><br>
                 
                 <button onclick="selecionarProduto(${index})">
@@ -1130,6 +1200,8 @@ function atualizarEstatisticasSessao(){
 }
 document.getElementById("descricao")
         .addEventListener("input", salvarDescricaoAtual);
+
+document.getElementById("modeloLegenda").value = modeloLegendaAtual;
 
 carregarHistoricoPublicacoes();
 carregarFila();

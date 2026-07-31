@@ -43,6 +43,19 @@
                     Busque um produto e publique no Telegram.
                 </p>
 
+                <label for="modeloLegenda" style="display:block;margin-bottom:6px;">
+                    ✍️ Modelo de legenda
+                </label>
+                <select
+                    id="modeloLegenda"
+                    onchange="definirModeloLegenda(this.value)">
+                    <option value="auto">🎲 Automático (varia por produto)</option>
+                    <option value="0">Modelo 1 - Padrão</option>
+                    <option value="1">Modelo 2 - Direto</option>
+                    <option value="2">Modelo 3 - Emocional</option>
+                    <option value="3">Modelo 4 - Destaques</option>
+                </select>
+
                 <textarea
                     id="url"
                     rows="6"
