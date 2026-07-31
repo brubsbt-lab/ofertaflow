@@ -1,5 +1,19 @@
 let produtoAtual = null;
 
+// OF-021: aviso discreto que aparece e some sozinho, sem travar a tela pedindo OK
+let toastTimeout = null;
+
+function mostrarToast(mensagem, tipo){
+        const toast = document.getElementById("toast");
+        toast.textContent = mensagem;
+        toast.className = tipo === "erro" ? "mostrar erro" : "mostrar";
+
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+                toast.className = "";
+        }, 3000);
+}
+
 // Controle de abas (OF-013: separar telas para reduzir poluição visual)
 function mudarAba(nome){
         const abas = ["buscar", "dia", "painel"];
@@ -157,6 +171,62 @@ const produtosTeste = [
                 marca: "Via Marte",
                 precoOriginal: "189.90",
                 precoAtual: "99.90",
+                imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
+        },
+        {
+                nome: "Sapatilha Cecconelo Verniz Nude",
+                marca: "Cecconelo",
+                precoOriginal: "159.90",
+                precoAtual: "119.90",
+                imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
+        },
+        {
+                nome: "Chinelo Havaianas Slim",
+                marca: "Havaianas",
+                precoOriginal: "49.90",
+                precoAtual: "34.90",
+                imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
+        },
+        {
+                nome: "Bota Carmen Steffens Cano Longo",
+                marca: "Carmen Steffens",
+                precoOriginal: "599.90",
+                precoAtual: "269.90",
+                imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
+        },
+        {
+                nome: "Tênis Vizzano Chunky Branco",
+                marca: "Vizzano",
+                precoOriginal: "259.90",
+                precoAtual: "142.90",
+                imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
+        },
+        {
+                nome: "Sandália Capodarte Salto Fino",
+                marca: "Capodarte",
+                precoOriginal: "329.90",
+                precoAtual: "115.90",
+                imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
+        },
+        {
+                nome: "Scarpin Carrano Couro Preto",
+                marca: "Carrano",
+                precoOriginal: "279.90",
+                precoAtual: "78.90",
+                imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
+        },
+        {
+                nome: "Mule Dumond Verniz",
+                marca: "Dumond",
+                precoOriginal: "349.90",
+                precoAtual: "62.90",
+                imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
+        },
+        {
+                nome: "Papete Melissa Transparente",
+                marca: "Melissa",
+                precoOriginal: "179.90",
+                precoAtual: "89.90",
                 imagem: "https://static.dafiti.com.br/p/Santa-Lolla-Sandalia-Feminina-Santa-Lolla-Salto-Bloco-Caramelo-7806-17271841-1-zoom.jpg"
         }
 ];
@@ -340,18 +410,31 @@ function atualizarOfertaDoDia(){
         botao.disabled = false;
 }
 
+// OF-040: garante que o link do produto sempre apareça na legenda enviada,
+// mesmo que a descrição tenha sido editada manualmente e o link removido por engano
+function garantirUrlNaDescricao(produto){
+        if(produto.url && !produto.descricao.includes(produto.url)){
+                produto.descricao = `${produto.descricao}\n\n🔗 ${produto.url}`;
+        }
+        return produto;
+}
+
 async function publicarOfertaDoDia(){
         const oferta = obterOfertaDoDia();
         if(!oferta){
-                alert("Nenhuma oferta na fila.");
+                mostrarToast("Nenhuma oferta na fila.", "erro");
+                return;
+        }
+
+        if(!confirm(`Publicar agora?\n\n${oferta.nome}\n${oferta.desconto}% OFF`)){
                 return;
         }
 
         const indice = produtos.indexOf(oferta);
-        const produtoDestaque = {
+        const produtoDestaque = garantirUrlNaDescricao({
                 ...oferta,
                 descricao: gerarDescricaoOfertaDoDia(oferta)
-        };
+        });
 
         const publicado = await publicarTelegram(produtoDestaque);
         registrarPublicacao(produtoDestaque, publicado);
@@ -368,10 +451,10 @@ async function publicarOfertaDoDia(){
                         indiceSelecionado = -1;
                 }
                 atualizarInterface();
-                alert("🏆 Oferta do Dia publicada!");
+                mostrarToast("🏆 Oferta do Dia publicada!");
         }else{
                 atualizarInterface();
-                alert("Erro ao publicar.");
+                mostrarToast("Erro ao publicar.", "erro");
         }
 }
         
@@ -408,7 +491,7 @@ async function prepararDia(){
                 .filter(l => l !== "");
 
         if(urls.length === 0){
-                alert("Cole os links dos produtos.");
+                mostrarToast("Cole os links dos produtos.", "erro");
                 return;
         }
 
@@ -426,7 +509,9 @@ async function prepararDia(){
 
         const produtosDoDia = [];
 
-        for(const url of urls){
+        for(const [i, url] of urls.entries()){
+                document.getElementById("statusBusca").innerHTML =
+                        `<span class="spinner"></span>Buscando produto ${i + 1} de ${urls.length}...`;
                 try{
                         let dados;
                         if(MODO_DESENVOLVIMENTO){
@@ -476,7 +561,7 @@ async function prepararDia(){
         liberarInterface();
 
         if(produtosDoDia.length === 0){
-                alert("Nenhum produto encontrado.");
+                mostrarToast("Nenhum produto encontrado.", "erro");
                 return;
         }
 
@@ -518,6 +603,7 @@ async function prepararDia(){
         const naoCoube = produtosDoDia.length - novosItens.length;
 
         renderizarPreparacaoDia(diaPreparado, naoCoube);
+        salvarSessao();
 }
 
 // Envia o lote inteiro (array com produto + horário) em uma única chamada.
@@ -525,14 +611,16 @@ async function prepararDia(){
 // e um segundo cenário agendado (Scheduler nativo, não Sleep) publica quando o horário chegar.
 async function enviarDiaParaMake(){
         if(diaPreparado.length === 0){
-                alert("Prepare o dia antes de enviar.");
+                mostrarToast("Prepare o dia antes de enviar.", "erro");
                 return;
         }
+
+        diaPreparado = diaPreparado.map(item => garantirUrlNaDescricao(item));
 
         if(MODO_DESENVOLVIMENTO){
                 console.log("📅 Simulação de envio do lote para o Make");
                 console.log(diaPreparado);
-                alert(`🧪 Modo Desenvolvimento\n\n${diaPreparado.length} produto(s) seriam enviados como fila para o Make.`);
+                mostrarToast(`🧪 Simulação: ${diaPreparado.length} produto(s) seriam enviados para o Make.`);
                 return;
         }
 
@@ -549,13 +637,13 @@ async function enviarDiaParaMake(){
                 );
 
                 if(resposta.ok){
-                        alert("✅ Fila do dia enviada para o Make!");
+                        mostrarToast("✅ Fila do dia enviada para o Make!");
                 }else{
-                        alert("Erro ao enviar a fila do dia.");
+                        mostrarToast("Erro ao enviar a fila do dia.", "erro");
                 }
         }catch(erro){
                 console.error(erro);
-                alert("Erro ao enviar a fila do dia.");
+                mostrarToast("Erro ao enviar a fila do dia.", "erro");
         }
 }
 
@@ -631,12 +719,14 @@ async function buscarProduto() {
         } 
         bloquearInterface();
         
-        for (const url of urls) {
+        for (const [i, url] of urls.entries()) {
                 if (!url) {
-                        alert("Cole o link do produto.");
+                        mostrarToast("Cole o link do produto.", "erro");
                         return;
                 }
                 document.getElementById("statusBusca").style.display = "block";
+                document.getElementById("statusBusca").innerHTML =
+                        `<span class="spinner"></span>Buscando produto ${i + 1} de ${urls.length}...`;
                 try {
                         let dados;
                         if (MODO_DESENVOLVIMENTO) {
@@ -718,7 +808,7 @@ async function buscarProduto() {
         
         liberarInterface();
         
-        alert(`${produtos.length} produto(s) encontrado(s)!`);
+        mostrarToast(`${produtos.length} produto(s) encontrado(s)!`);
 }
 
 function atualizarListaProdutos(){
@@ -732,7 +822,8 @@ function atualizarListaProdutos(){
                 lista.innerHTML +=`
                 <div class="produto-item ${
                         index === indiceSelecionado ? "selecionado" : ""
-                }">
+                }" data-indice="${index}">
+                <span class="arrastar">⠿</span>
                 <strong>${index + 1}º</strong> - ${obterIconeCategoria(produto.nome)} ${produto.nome}
                 <br>
                 ${obterRotuloOferta(produto.desconto)} - ${produto.desconto}% OFF &nbsp; ⭐ Score: ${score.valor} ${score.rotulo}
@@ -757,6 +848,67 @@ function atualizarListaProdutos(){
         });
         document.getElementById("tituloFila").innerHTML =
                 `📦 Produtos carregados (${produtos.length})`;
+
+        ativarArrastarSoltar();
+}
+
+// OF-033: reordenar a fila arrastando (funciona com toque no celular via Pointer Events)
+function ativarArrastarSoltar(){
+        const lista = document.getElementById("listaProdutos");
+        let itemArrastando = null;
+
+        lista.querySelectorAll(".produto-item .arrastar").forEach((alca) => {
+                alca.onpointerdown = (evento) => {
+                        evento.preventDefault();
+                        itemArrastando = alca.closest(".produto-item");
+                        itemArrastando.classList.add("arrastando");
+                };
+        });
+
+        lista.onpointermove = (evento) => {
+                if(!itemArrastando){
+                        return;
+                }
+                const alvo = document.elementFromPoint(evento.clientX, evento.clientY);
+                const itemAlvo = alvo ? alvo.closest(".produto-item") : null;
+                if(!itemAlvo || itemAlvo === itemArrastando){
+                        return;
+                }
+                const rect = itemAlvo.getBoundingClientRect();
+                const depoisDoMeio = evento.clientY > rect.top + rect.height / 2;
+                if(depoisDoMeio){
+                        itemAlvo.after(itemArrastando);
+                }else{
+                        itemAlvo.before(itemArrastando);
+                }
+        };
+
+        const finalizarArrasto = () => {
+                if(!itemArrastando){
+                        return;
+                }
+                itemArrastando.classList.remove("arrastando");
+
+                const produtoSelecionado = indiceSelecionado >= 0
+                        ? produtos[indiceSelecionado]
+                        : null;
+
+                const novaOrdem = Array.from(
+                        lista.querySelectorAll(".produto-item")
+                ).map(el => produtos[parseInt(el.dataset.indice)]);
+
+                produtos = novaOrdem;
+
+                if(produtoSelecionado){
+                        indiceSelecionado = produtos.indexOf(produtoSelecionado);
+                }
+
+                itemArrastando = null;
+                atualizarInterface();
+        };
+
+        lista.onpointerup = finalizarArrasto;
+        lista.onpointerleave = finalizarArrasto;
 }
 
 function removerProduto(indice){
@@ -826,14 +978,14 @@ async function publicarTelegram(produto){
         bloquearInterface();
         if(!produto){
                 liberarInterface();
-                alert("Nenhum produto para publicar.");
+                mostrarToast("Nenhum produto para publicar.", "erro");
                 return false;
         }
 
         if (MODO_DESENVOLVIMENTO) {
                     console.log("📱 Simulação de publicação");
                     console.log(produto);;
-                    alert("🧪 Modo Desenvolvimento\n\nPublicação simulada com sucesso!");
+                    mostrarToast("🧪 Simulação: publicação simulada com sucesso!");
                     liberarInterface();
                 return true;
         }
@@ -893,14 +1045,18 @@ function registrarPublicacao(produto, sucesso){
 // OF-010: publica sempre o produto selecionado no momento, onde quer que ele esteja na fila
 async function publicarSelecionado(){
         if(indiceSelecionado < 0 || !produtos[indiceSelecionado]){
-                alert("Selecione um produto primeiro.");
+                mostrarToast("Selecione um produto primeiro.", "erro");
                 return;
         }
 
         salvarDescricaoAtual();
 
         const indice = indiceSelecionado;
-        const produto = produtos[indice];
+        const produto = garantirUrlNaDescricao(produtos[indice]);
+
+        if(!confirm(`Publicar agora?\n\n${produto.nome}\n${produto.desconto}% OFF`)){
+                return;
+        }
 
         const publicado = await publicarTelegram(produto);
         registrarPublicacao(produto, publicado);
@@ -917,17 +1073,17 @@ async function publicarSelecionado(){
                         indiceSelecionado = -1;
                         atualizarInterface();
                 }
-                alert("✅ Produto publicado!");
+                mostrarToast("✅ Produto publicado!");
         }else{
                 atualizarInterface();
-                alert("Erro ao publicar.");
+                mostrarToast("Erro ao publicar.", "erro");
         }
 }
 
 // OF-007.2: publica sempre o primeiro da fila, na ordem, independente do que estiver selecionado na tela
 async function publicarProximo(){
         if(produtos.length === 0){
-                alert("Fila vazia.");
+                mostrarToast("Fila vazia.", "erro");
                 return;
         }
 
@@ -935,7 +1091,12 @@ async function publicarProximo(){
                 salvarDescricaoAtual();
         }
 
-        const produto = produtos[0];
+        const produto = garantirUrlNaDescricao(produtos[0]);
+
+        if(!confirm(`Publicar agora?\n\n${produto.nome}\n${produto.desconto}% OFF`)){
+                return;
+        }
+
         const publicado = await publicarTelegram(produto);
         registrarPublicacao(produto, publicado);
 
@@ -951,10 +1112,10 @@ async function publicarProximo(){
                         indiceSelecionado = -1;
                         atualizarInterface();
                 }
-                alert("✅ Produto publicado!");
+                mostrarToast("✅ Produto publicado!");
         }else{
                 atualizarInterface();
-                alert("Erro ao publicar.");
+                mostrarToast("Erro ao publicar.", "erro");
         }
 }
 
@@ -986,6 +1147,7 @@ function atualizarInterface(){
         atualizarEstatisticasSessao();
         atualizarPainelControle();
         atualizarOfertaDoDia();
+        salvarSessao();
 }
 
 // OF-013: Painel de Controle — visão geral de pendentes, publicados, falhas e última publicação
@@ -1066,12 +1228,12 @@ async function copiarDescricao(){
                         textarea.setSelectionRange(0, 999999);
                         document.execCommand("copy");
                 }
-                alert("✅ Descrição copiada!");
+                mostrarToast("✅ Descrição copiada!");
         }catch(erro){
                 console.error(erro);
                 textarea.select();
                 textarea.setSelectionRange(0, 999999);
-                alert("Selecione e copie manualmente (Ctrl+C ou Copiar).");
+                mostrarToast("Selecione e copie manualmente (Ctrl+C ou Copiar).", "erro");
         }
 }
 
@@ -1104,12 +1266,12 @@ function atualizarEstatisticasDesconto(){
 function bloquearInterface(){
 
     if(!document.getElementById("btnBuscar")){
-        alert("btnBuscar não encontrado");
+        console.error("btnBuscar não encontrado");
         return;
     }
 
     if(!document.getElementById("btnTelegram")){
-        alert("btnTelegram não encontrado");
+        console.error("btnTelegram não encontrado");
         return;
     }
 
@@ -1127,6 +1289,34 @@ function salvarFila(){
                 "filaOfertaFlow",
                 JSON.stringify(produtos)
         );
+}
+
+// OF-031: retomar a sessão de onde parou (seleção, publicados, painel, preparar o dia)
+function salvarSessao(){
+        localStorage.setItem("sessaoOfertaFlow", JSON.stringify({
+                publicados: publicados,
+                indiceSelecionado: indiceSelecionado,
+                diaPreparado: diaPreparado,
+                falhas: falhas,
+                ultimaPublicacao: ultimaPublicacao,
+                logErros: logErros
+        }));
+}
+
+function carregarSessao(){
+        const salvo = localStorage.getItem("sessaoOfertaFlow");
+        if(!salvo){
+                return null;
+        }
+
+        const dados = JSON.parse(salvo);
+        publicados = dados.publicados || 0;
+        diaPreparado = dados.diaPreparado || [];
+        falhas = dados.falhas || 0;
+        ultimaPublicacao = dados.ultimaPublicacao || null;
+        logErros = dados.logErros || [];
+
+        return dados.indiceSelecionado;
 }
 
 // OF-015: histórico permanente de publicações (sobrevive ao fechar/recarregar o app)
@@ -1175,15 +1365,25 @@ function limparHistoricoPublicacoes(){
 }
 
 function carregarFila(){
+        const indiceSalvo = carregarSessao();
+
         const filaSalva =
                 localStorage.getItem("filaOfertaFlow");
-        if(!filaSalva){
-                return;
+        if(filaSalva){
+                produtos = JSON.parse(filaSalva);
         }
-        produtos = JSON.parse(filaSalva);
+
         atualizarInterface();
+
         if(produtos.length > 0){
-                selecionarProduto(0);
+                const indice = (indiceSalvo !== null && indiceSalvo !== undefined && produtos[indiceSalvo])
+                        ? indiceSalvo
+                        : 0;
+                selecionarProduto(indice);
+        }
+
+        if(diaPreparado.length > 0){
+                renderizarPreparacaoDia(diaPreparado, 0);
         }
 }
 

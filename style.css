@@ -164,6 +164,21 @@ img{
     line-height:1.5;
 }
 
+.produto-item.arrastando{
+    opacity:.5;
+    border:1px dashed #9ca3af;
+}
+
+.arrastar{
+    display:inline-block;
+    cursor:grab;
+    touch-action:none;
+    padding:0 10px 0 0;
+    color:#9ca3af;
+    font-size:18px;
+    user-select:none;
+}
+
 .produto-item button{
     width:auto;
     margin:6px 6px 0 0;
@@ -238,4 +253,48 @@ img{
 @keyframes fadeIn{
     from{ opacity:0; }
     to{ opacity:1; }
+}
+
+#toast{
+    position:fixed;
+    left:50%;
+    bottom:24px;
+    transform:translateX(-50%) translateY(16px);
+    background:#111827;
+    color:white;
+    padding:12px 20px;
+    border-radius:10px;
+    font-size:14px;
+    max-width:90%;
+    text-align:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+    z-index:1000;
+    box-shadow:0 4px 14px rgba(0,0,0,.18);
+}
+
+#toast.mostrar{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+}
+
+#toast.erro{
+    background:#b91c1c;
+}
+
+.spinner{
+    display:inline-block;
+    width:14px;
+    height:14px;
+    border:2px solid #d1d5db;
+    border-top-color:#111827;
+    border-radius:50%;
+    margin-right:8px;
+    vertical-align:middle;
+    animation:girar .7s linear infinite;
+}
+
+@keyframes girar{
+    to{ transform:rotate(360deg); }
 }
