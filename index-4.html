@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>OfertaFlow</title>
+
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <div id="toast"></div>
+        <div id="overlayProcessamento">
+            <span class="spinner"></span>
+        </div>
+
+        <div class="container">
+            <div class="topo">
+                <h1>OfertaFlow</h1>
+                <button id="btnTema" onclick="alternarTema()">Tema escuro</button>
+            </div>
+
+            <div class="abas">
+                <button
+                    class="aba-botao ativa"
+                    id="abaBotao-inicio"
+                    onclick="mudarAba('inicio')">
+                    Início
+                </button>
+                <button
+                    class="aba-botao"
+                    id="abaBotao-buscar"
+                    onclick="mudarAba('buscar')">
+                    Buscar
+                </button>
+                <button
+                    class="aba-botao"
+                    id="abaBotao-dia"
+                    onclick="mudarAba('dia')">
+                    Dia
+                </button>
+                <button
+                    class="aba-botao"
+                    id="abaBotao-painel"
+                    onclick="mudarAba('painel')">
+                    Painel
+                </button>
+            </div>
+
+            <!-- ABA: Dashboard inicial -->
+            <div id="aba-inicio" class="aba-conteudo">
+                <div class="card">
+                    <h3>Resumo</h3>
+                    <div id="dashboardResumo"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Oferta do Dia</h3>
+                    <div id="dashboardOfertaDoDia"></div>
+                    <button onclick="mudarAba('buscar')">
+                        Ver na aba Buscar
+                    </button>
+                </div>
+            </div>
+
+            <!-- ABA: Buscar & Publicar -->
+            <div id="aba-buscar" class="aba-conteudo" style="display:none;">
+
+                <p class="subtitle">
+                    Busque um produto e publique no Telegram.
+                </p>
+
+                <textarea
+                    id="url"
+                    rows="6"
+                    placeholder="Cole um ou mais links (um por linha)"></textarea>
+
+                <button
+                    id="btnBuscar"
+                    onclick="buscarProduto()">
+                    Buscar Produto
+                </button>
+
+                <button
+                    id="btnPrepararDia"
+                    onclick="prepararDia()">
+                    Preparar o Dia
+                </button>
+
+                <p id="statusBusca" style="display:none;"></p>
+
+                <div id="cardProduto" class="card">
+                    <img
+                        id="imagem"
+                        alt="Imagem do produto"
+                        src=""
+                        style="display:none;">
+
+                    <h2 id="nome">
+                        Nenhum produto carregado
+                    </h2>
+
+                    <div class="precos">
+                        <span id="original"></span>
+                        <span id="atual"></span>
+                    </div>
+
+                    <div id="infoOferta"></div>
+
+                    <textarea
+                        id="descricao"
+                        placeholder="Descrição da oferta..."></textarea>
+                    <button onclick="copiarDescricao()">
+                        Copiar descrição
+                    </button>
+                    <button onclick="copiarLink()">
+                        Copiar link
+                    </button>
+                    <button onclick="mostrarPreviaPublicacao()">
+                        Pré-visualizar publicação
+                    </button>
+                    <div id="previaPublicacao" class="card" style="display:none;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Oferta do Dia</h3>
+                    <div id="ofertaDoDia"></div>
+                    <button
+                        id="btnPublicarOfertaDoDia"
+                        onclick="publicarOfertaDoDia()">
+                        Publicar Oferta do Dia
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3 id="tituloFila">
+                        Produtos carregados (0)
+                    </h3>
+
+                    <div id="proximoProduto">
+                        <span class="rotulo-secao">Próximo produto</span>
+                        <div id="nomeProximo">Nenhum produto</div>
+                    </div>
+
+                    <input
+                        type="text"
+                        id="buscaFila"
+                        placeholder="Buscar na fila (nome ou marca)"
+                        oninput="pesquisarFila(this.value)">
+
+                    <select id="filtroFila" onchange="filtrarFila(this.value)">
+                        <option value="todos">Mostrar: Todos</option>
+                        <option value="oferta">Só Oferta</option>
+                        <option value="super">Só Super Oferta</option>
+                        <option value="imperdivel">Só Oferta Imperdível</option>
+                        <option value="relampago">Só Oferta Relâmpago</option>
+                    </select>
+
+                    <select id="ordenacaoFila" onchange="ordenarFila(this.value)">
+                        <option value="manual">Ordem: Manual</option>
+                        <option value="desconto">Maior desconto</option>
+                        <option value="score">Maior score</option>
+                        <option value="nome">Nome A-Z</option>
+                    </select>
+
+                    <button onclick="embaralharFila()">
+                        Embaralhar fila
+                    </button>
+
+                    <div id="listaProdutos"></div>
+
+                    <button
+                        id="btnTelegram"
+                        class="telegram"
+                        onclick="publicarSelecionado()">
+                        Publicar Selecionado
+                    </button>
+
+                    <button
+                        id="btnProximo"
+                        onclick="publicarProximo()">
+                        Publicar Próximo
+                    </button>
+                </div>
+            </div>
+
+            <!-- ABA: Preparar o Dia -->
+            <div id="aba-dia" class="aba-conteudo" style="display:none;">
+                <div class="card">
+                    <h3>Preparar o Dia</h3>
+                    <div id="resultadoPreparacaoDia"></div>
+                    <div id="listaHorariosDia"></div>
+                    <button
+                        id="btnEnviarDia"
+                        onclick="enviarDiaParaMake()">
+                        Enviar fila do dia
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h3>Resumo da Fila</h3>
+                    <div id="estatisticasDesconto"></div>
+                    <div id="qualidadeFila"></div>
+                    <div id="economiaFila"></div>
+                </div>
+            </div>
+
+            <!-- ABA: Painel de Controle -->
+            <div id="aba-painel" class="aba-conteudo" style="display:none;">
+                <div class="card">
+                    <h3>Painel de Controle</h3>
+                    <div id="painelControle"></div>
+                    <div id="logErros"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Histórico da Sessão</h3>
+                    <div
+                        id="historicoSessao"
+                        class="historico">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Histórico de Publicações</h3>
+                    <div
+                        id="historicoPublicacoes"
+                        class="historico">
+                    </div>
+                    <button onclick="limparHistoricoPublicacoes()">
+                        Limpar histórico
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <script src="script.js"></script>
+
+    </body>
+</html>

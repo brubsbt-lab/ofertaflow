@@ -16,7 +16,7 @@ function mostrarToast(mensagem, tipo){
 
 // Controle de abas (OF-013: separar telas para reduzir poluição visual)
 function mudarAba(nome){
-        const abas = ["buscar", "dia", "painel"];
+        const abas = ["inicio", "buscar", "dia", "painel"];
 
         abas.forEach(aba => {
                 document.getElementById(`aba-${aba}`).style.display =
@@ -91,19 +91,19 @@ const PESO_MARCA_PADRAO = 30; // marca fora da tabela
 
 // OF-019: ícone automático conforme o tipo de calçado, detectado pelo nome do produto
 const ICONE_CATEGORIA = [
-        { termo: "sandália", icone: "👡" },
-        { termo: "sandalia", icone: "👡" },
-        { termo: "anabela", icone: "👡" },
-        { termo: "scarpin", icone: "👠" },
-        { termo: "mule", icone: "👠" },
-        { termo: "salto", icone: "👠" },
-        { termo: "tênis", icone: "👟" },
-        { termo: "tenis", icone: "👟" },
-        { termo: "bota", icone: "👢" },
-        { termo: "sapatilha", icone: "🥿" },
-        { termo: "chinelo", icone: "🩴" },
-        { termo: "rasteira", icone: "🩴" },
-        { termo: "papete", icone: "🩴" }
+        { termo: "sandália", icone: "👡", hashtag: "sandalia" },
+        { termo: "sandalia", icone: "👡", hashtag: "sandalia" },
+        { termo: "anabela", icone: "👡", hashtag: "anabela" },
+        { termo: "scarpin", icone: "👠", hashtag: "scarpin" },
+        { termo: "mule", icone: "👠", hashtag: "mule" },
+        { termo: "salto", icone: "👠", hashtag: "saltoalto" },
+        { termo: "tênis", icone: "👟", hashtag: "tenis" },
+        { termo: "tenis", icone: "👟", hashtag: "tenis" },
+        { termo: "bota", icone: "👢", hashtag: "bota" },
+        { termo: "sapatilha", icone: "🥿", hashtag: "sapatilha" },
+        { termo: "chinelo", icone: "🩴", hashtag: "chinelo" },
+        { termo: "rasteira", icone: "🩴", hashtag: "rasteira" },
+        { termo: "papete", icone: "🩴", hashtag: "papete" }
 ];
 const ICONE_CATEGORIA_PADRAO = "👠";
 
@@ -115,6 +115,31 @@ function obterIconeCategoria(nome){
                 }
         }
         return ICONE_CATEGORIA_PADRAO;
+}
+
+// OF-109: hashtags automáticas com base na categoria, marca e faixa de desconto
+function obterHashtags(produto){
+        const nomeMin = (produto.nome || "").toLowerCase();
+        const itemCategoria = ICONE_CATEGORIA.find(item => nomeMin.includes(item.termo));
+        const categoriaTag = itemCategoria ? itemCategoria.hashtag : "calcados";
+
+        const faixaTags = {
+                oferta: "promocao",
+                super: "superoferta",
+                imperdivel: "ofertaimperdivel",
+                relampago: "ofertarelampago"
+        };
+
+        const tags = [
+                "#" + categoriaTag,
+                "#" + faixaTags[obterFaixaFiltro(produto.desconto)]
+        ];
+
+        if(produto.marca){
+                tags.push("#" + produto.marca.replace(/[^a-zA-ZÀ-ú0-9]/g, ""));
+        }
+
+        return tags.join(" ");
 }
 
 function calcularScore(produto){
@@ -276,10 +301,10 @@ function formatarPreco(valor){
 // OF-017: rótulo automático da legenda conforme a faixa de desconto
 function obterRotuloOferta(desconto){
         if(desconto >= 80){
-                return "👑 Oferta Imperdível";
+                return "🚨 Oferta Relâmpago";
         }
         if(desconto >= 70){
-                return "🚨 Oferta Relâmpago";
+                return "👑 Oferta Imperdível";
         }
         if(desconto >= 60){
                 return "💥 Super Oferta";
@@ -294,11 +319,25 @@ function escaparMarkdownV2(texto){
 }
 
 // Legenda única e padronizada: Tipo de oferta / Descrição / Desconto / De (riscado) / Por (negrito) / Link
+// OF-107: call-to-action automático conforme a faixa de desconto
+function obterCTAOferta(desconto){
+        const faixa = obterFaixaFiltro(desconto);
+        const ctas = {
+                oferta: "Aproveite antes que acabe!",
+                super: "Corre que é por tempo limitado!",
+                imperdivel: "Não fica de fora dessa!",
+                relampago: "Últimas unidades, corre!"
+        };
+        return ctas[faixa];
+}
+
 function gerarDescricao(produto){
         const nome = escaparMarkdownV2(`${obterIconeCategoria(produto.nome)} ${produto.nome}`);
         const precoOriginal = escaparMarkdownV2(formatarPreco(produto.precoOriginal));
         const precoAtual = escaparMarkdownV2(formatarPreco(produto.precoAtual));
         const url = escaparMarkdownV2(produto.url);
+        const cta = escaparMarkdownV2(obterCTAOferta(produto.desconto));
+        const hashtags = escaparMarkdownV2(obterHashtags(produto));
 
         return `${obterRotuloOferta(produto.desconto)}
 
@@ -309,7 +348,11 @@ ${nome}
 De: ~R$ ${precoOriginal}~
 Por: *R$ ${precoAtual}*
 
-🔗 ${url}`;
+🔗 ${url}
+
+${cta}
+
+${hashtags}`;
 }
 
 // OF-016: Oferta do Dia = produto com maior Score da Oferta na fila atual
@@ -337,6 +380,7 @@ function gerarDescricaoOfertaDoDia(produto){
         const precoOriginal = escaparMarkdownV2(formatarPreco(produto.precoOriginal));
         const precoAtual = escaparMarkdownV2(formatarPreco(produto.precoAtual));
         const url = escaparMarkdownV2(produto.url);
+        const hashtags = escaparMarkdownV2(obterHashtags(produto));
 
         return `🏆 OFERTA DO DIA
 
@@ -347,7 +391,9 @@ ${nome}
 De: ~R$ ${precoOriginal}~
 Por: *R$ ${precoAtual}*
 
-🔗 ${url}`;
+🔗 ${url}
+
+${hashtags}`;
 }
 
 function atualizarOfertaDoDia(){
@@ -525,6 +571,11 @@ async function prepararDia(){
                 return;
         }
 
+        const falhasBusca = urls.length - produtosDoDia.length;
+        if(falhasBusca > 0){
+                mostrarToast(`${produtosDoDia.length} de ${urls.length} importado(s), ${falhasBusca} falhou/falharam.`, "erro");
+        }
+
         const minutoFimBase = DIA_HORA_FIM * 60;
         const minutoInicioBase = DIA_HORA_INICIO * 60;
         let minutoInicio;
@@ -680,7 +731,10 @@ async function buscarProduto() {
                 }
         } 
         bloquearInterface();
-        
+
+        let sucessosImportacao = 0;
+        let falhasImportacao = 0;
+
         for (const [i, url] of urls.entries()) {
                 if (!url) {
                         mostrarToast("Cole o link do produto.", "erro");
@@ -749,9 +803,11 @@ async function buscarProduto() {
                         renderizarProduto(produtoAtual);
                         
                         atualizarInterface();
+                        sucessosImportacao++;
                         
                 } catch (erro) {
                         console.error(erro);
+                        falhasImportacao++;
                         document.getElementById("statusBusca").style.display = "none";
                 }
         }
@@ -766,7 +822,64 @@ async function buscarProduto() {
         
         liberarInterface();
         
-        mostrarToast(`${produtos.length} produto(s) encontrado(s)!`);
+        mostrarToast(
+                falhasImportacao > 0
+                        ? `${sucessosImportacao} de ${urls.length} importado(s), ${falhasImportacao} falhou/falharam.`
+                        : `${sucessosImportacao} produto(s) encontrado(s)!`,
+                falhasImportacao > 0 ? "erro" : undefined
+        );
+}
+
+function produtoJaPublicado(produto){
+        return historicoPublicacoes.some(item => item.url && item.url === produto.url);
+}
+
+function contarUrlNaFila(url){
+        return produtos.filter(p => p.url === url).length;
+}
+
+// OF-078/079: filtro visual e ordenação da fila
+let filtroFila = "todos";
+let buscaFila = "";
+
+function obterFaixaFiltro(desconto){
+        if(desconto >= 80) return "relampago";
+        if(desconto >= 70) return "imperdivel";
+        if(desconto >= 60) return "super";
+        return "oferta";
+}
+
+function filtrarFila(valor){
+        filtroFila = valor;
+        atualizarListaProdutos();
+}
+
+// OF-115: pesquisa por nome ou marca dentro da fila
+function pesquisarFila(valor){
+        buscaFila = valor.trim().toLowerCase();
+        atualizarListaProdutos();
+}
+
+function ordenarFila(criterio){
+        if(criterio === "manual"){
+                return;
+        }
+
+        const produtoSelecionado = indiceSelecionado >= 0 ? produtos[indiceSelecionado] : null;
+
+        if(criterio === "desconto"){
+                produtos.sort((a, b) => b.desconto - a.desconto);
+        }else if(criterio === "score"){
+                produtos.sort((a, b) => calcularScore(b).valor - calcularScore(a).valor);
+        }else if(criterio === "nome"){
+                produtos.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+        }
+
+        if(produtoSelecionado){
+                indiceSelecionado = produtos.indexOf(produtoSelecionado);
+        }
+
+        atualizarInterface();
 }
 
 function atualizarListaProdutos(){
@@ -776,7 +889,26 @@ function atualizarListaProdutos(){
         lista.innerHTML = "";
         
         produtos.forEach((produto,index)=>{
+                if(filtroFila !== "todos" && obterFaixaFiltro(produto.desconto) !== filtroFila){
+                        return;
+                }
+                if(buscaFila && !(
+                        produto.nome.toLowerCase().includes(buscaFila) ||
+                        (produto.marca || "").toLowerCase().includes(buscaFila)
+                )){
+                        return;
+                }
+
                 const score = calcularScore(produto);
+
+                const avisos = [];
+                if(produtoJaPublicado(produto)){
+                        avisos.push(selo("Já publicado antes", "medio"));
+                }
+                if(contarUrlNaFila(produto.url) > 1){
+                        avisos.push(selo("Link duplicado", "alto"));
+                }
+
                 lista.innerHTML +=`
                 <div class="produto-item ${
                         index === indiceSelecionado ? "selecionado" : ""
@@ -785,6 +917,7 @@ function atualizarListaProdutos(){
                 <strong>${index + 1}º</strong> - ${obterIconeCategoria(produto.nome)} ${produto.nome}
                 <br>
                 ${produto.desconto}% OFF · Score ${score.valor} ${selo(score.texto, score.nivel)}
+                ${avisos.length > 0 ? "<br>" + avisos.join(" ") : ""}
                 <br><br>
                 
                 <button onclick="selecionarProduto(${index})">
@@ -797,6 +930,10 @@ function atualizarListaProdutos(){
                 
                 <button onclick="moverParaBaixo(${index})">
                 ⬇️
+                </button>
+                
+                <button onclick="duplicarProduto(${index})">
+                ⧉
                 </button>
                 
                 <button onclick="removerProduto(${index})">
@@ -869,6 +1006,14 @@ function ativarArrastarSoltar(){
         lista.onpointerleave = finalizarArrasto;
 }
 
+// OF-114: duplicar um produto da fila (útil quando quer postar o mesmo item em dois horários)
+function duplicarProduto(indice){
+        const copia = { ...produtos[indice] };
+        produtos.splice(indice + 1, 0, copia);
+        atualizarInterface();
+        mostrarToast("Produto duplicado!");
+}
+
 function removerProduto(indice){
 
     if(!confirm("Deseja realmente remover este produto da fila?")){
@@ -914,6 +1059,30 @@ function moverParaBaixo(indice){
                 indiceSelecionado--;
         }
         atualizarInterface();
+}
+
+// OF-080: embaralhar a ordem da fila (Fisher-Yates), preservando qual produto está selecionado
+function embaralharFila(){
+        if(produtos.length < 2){
+                return;
+        }
+        if(!confirm("Embaralhar a ordem da fila?")){
+                return;
+        }
+
+        const produtoSelecionado = indiceSelecionado >= 0 ? produtos[indiceSelecionado] : null;
+
+        for(let i = produtos.length - 1; i > 0; i--){
+                const j = Math.floor(Math.random() * (i + 1));
+                [produtos[i], produtos[j]] = [produtos[j], produtos[i]];
+        }
+
+        if(produtoSelecionado){
+                indiceSelecionado = produtos.indexOf(produtoSelecionado);
+        }
+
+        atualizarInterface();
+        mostrarToast("Fila embaralhada!");
 }
 
 function selecionarProduto(indice){
@@ -989,7 +1158,8 @@ function registrarPublicacao(produto, sucesso){
                         nome: produto.nome,
                         marca: produto.marca || "",
                         desconto: produto.desconto,
-                        score: score.valor
+                        score: score.valor,
+                        url: produto.url || ""
                 });
 
                 salvarHistoricoPublicacoes();
@@ -1084,7 +1254,43 @@ function atualizarInterface(){
         atualizarEconomiaFila();
         atualizarPainelControle();
         atualizarOfertaDoDia();
+        atualizarDashboard();
         salvarSessao();
+}
+
+// OF-068/069: dashboard inicial com o resumo geral do app
+function atualizarDashboard(){
+        const resumo = document.getElementById("dashboardResumo");
+
+        const proxima = diaPreparado.length > 0
+                ? `${diaPreparado[0].horario} — ${diaPreparado[0].nome}`
+                : "Nenhuma agendada";
+
+        const ultima = ultimaPublicacao
+                ? `${ultimaPublicacao.hora} - ${ultimaPublicacao.nome}`
+                : "Nenhuma ainda";
+
+        resumo.innerHTML = `
+                Pendentes na fila: <b>${produtos.length}</b><br>
+                Publicados: <b>${publicados}</b><br>
+                Falhas: <b>${falhas}</b><br>
+                Última publicação: <b>${ultima}</b><br>
+                Próxima publicação agendada: <b>${proxima}</b>
+        `;
+
+        const elementoOferta = document.getElementById("dashboardOfertaDoDia");
+        const oferta = obterOfertaDoDia();
+
+        if(!oferta){
+                elementoOferta.innerHTML = "Nenhuma oferta na fila.";
+                return;
+        }
+
+        const score = calcularScore(oferta);
+        elementoOferta.innerHTML = `
+                <strong>${obterIconeCategoria(oferta.nome)} ${oferta.nome}</strong><br>
+                ${oferta.desconto}% OFF · Score ${score.valor} ${selo(score.texto, score.nivel)}
+        `;
 }
 
 // OF-013: Painel de Controle — visão geral de pendentes, publicados, falhas e última publicação
@@ -1123,6 +1329,38 @@ function atualizarProximoProduto(){
         elemento.innerHTML = `${obterIconeCategoria(produtos[0].nome)} ${produtos[0].nome}`;
 }
 
+// OF-110: pré-visualização de como a legenda vai aparecer no Telegram (negrito/riscado renderizados)
+function renderizarPreviaMarkdown(texto){
+        let html = texto.replace(/\\([_*\[\]()~`>#+\-=|{}.!\\])/g, "$1");
+        html = html.replace(/\*(.+?)\*/g, "<b>$1</b>");
+        html = html.replace(/~(.+?)~/g, "<s>$1</s>");
+        return html.replace(/\n/g, "<br>");
+}
+
+function mostrarPreviaPublicacao(){
+        const painel = document.getElementById("previaPublicacao");
+
+        if(painel.style.display === "block"){
+                painel.style.display = "none";
+                return;
+        }
+
+        if(indiceSelecionado < 0 || !produtos[indiceSelecionado]){
+                mostrarToast("Selecione um produto primeiro.", "erro");
+                return;
+        }
+
+        const produto = produtos[indiceSelecionado];
+        const texto = document.getElementById("descricao").value;
+        const html = renderizarPreviaMarkdown(texto);
+
+        painel.innerHTML = `
+                <img src="${produto.imagem}" style="max-width:100%;border-radius:8px;margin-bottom:8px;">
+                <div>${html}</div>
+        `;
+        painel.style.display = "block";
+}
+
 async function copiarDescricao(){
         const textarea = document.getElementById("descricao");
         try{
@@ -1139,6 +1377,28 @@ async function copiarDescricao(){
                 textarea.select();
                 textarea.setSelectionRange(0, 999999);
                 mostrarToast("Selecione e copie manualmente (Ctrl+C ou Copiar).", "erro");
+        }
+}
+
+// OF-072: copiar apenas o link do produto selecionado, sem o resto da legenda
+async function copiarLink(){
+        if(indiceSelecionado < 0 || !produtos[indiceSelecionado]){
+                mostrarToast("Selecione um produto primeiro.", "erro");
+                return;
+        }
+
+        const url = produtos[indiceSelecionado].url;
+
+        try{
+                if(navigator.clipboard && window.isSecureContext){
+                        await navigator.clipboard.writeText(url);
+                        mostrarToast("✅ Link copiado!");
+                }else{
+                        throw new Error("clipboard indisponível");
+                }
+        }catch(erro){
+                console.error(erro);
+                mostrarToast("Não foi possível copiar automaticamente: " + url, "erro");
         }
 }
 
@@ -1163,8 +1423,8 @@ function atualizarEstatisticasDesconto(){
         document.getElementById("estatisticasDesconto").innerHTML = `
                 Oferta: <b>${faixa40}</b><br>
                 Super Oferta: <b>${faixa60}</b><br>
-                Oferta Relâmpago: <b>${faixa70}</b><br>
-                Oferta Imperdível: <b>${faixa80}</b>
+                Oferta Imperdível: <b>${faixa70}</b><br>
+                Oferta Relâmpago: <b>${faixa80}</b>
         `;
 }
 
@@ -1182,11 +1442,13 @@ function bloquearInterface(){
 
     document.getElementById("btnBuscar").disabled = true;
     document.getElementById("btnTelegram").disabled = true;
+    document.getElementById("overlayProcessamento").style.display = "flex";
 }
 
 function liberarInterface(){
         document.getElementById("btnBuscar").disabled = false;
         document.getElementById("btnTelegram").disabled = false;
+        document.getElementById("overlayProcessamento").style.display = "none";
 }
 
 function salvarFila(){
@@ -1351,5 +1613,21 @@ function atualizarEconomiaFila(){
 document.getElementById("descricao")
         .addEventListener("input", salvarDescricaoAtual);
 
+// OF-085: tema escuro
+function alternarTema(){
+        const escuro = document.body.classList.toggle("tema-escuro");
+        localStorage.setItem("temaOfertaFlow", escuro ? "escuro" : "claro");
+        document.getElementById("btnTema").textContent = escuro ? "Tema claro" : "Tema escuro";
+}
+
+function carregarTema(){
+        const salvo = localStorage.getItem("temaOfertaFlow");
+        if(salvo === "escuro"){
+                document.body.classList.add("tema-escuro");
+                document.getElementById("btnTema").textContent = "Tema claro";
+        }
+}
+
+carregarTema();
 carregarHistoricoPublicacoes();
 carregarFila();
