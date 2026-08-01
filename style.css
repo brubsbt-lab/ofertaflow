@@ -214,6 +214,38 @@ img{
     color:#4b5563;
 }
 
+.selo{
+    display:inline-block;
+    padding:1px 8px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.selo-alto{
+    background:#fef2f2;
+    color:#b91c1c;
+}
+
+.selo-medio{
+    background:#fffbeb;
+    color:#b45309;
+}
+
+.selo-baixo{
+    background:#f0fdf4;
+    color:#15803d;
+}
+
+.rotulo-secao{
+    display:block;
+    font-size:12px;
+    color:#9ca3af;
+    margin-bottom:4px;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+}
+
 .abas{
     display:flex;
     gap:4px;

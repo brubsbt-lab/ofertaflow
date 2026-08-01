@@ -30,7 +30,6 @@ function mudarAba(nome){
 
 let historico = [];
 
-let totalFila = 0;
 
 let publicados = 0;
 
@@ -123,16 +122,25 @@ function calcularScore(produto){
         const pesoMarca = categoria ? PESO_CATEGORIA[categoria] : PESO_MARCA_PADRAO;
         const valor = Math.round((produto.desconto * 0.7) + (pesoMarca * 0.3));
 
-        let rotulo = "";
+        let nivel = "";
+        let texto = "";
         if(valor >= 70){
-                rotulo = "🔴 Alto";
+                nivel = "alto";
+                texto = "Alto";
         }else if(valor >= 40){
-                rotulo = "🟡 Médio";
+                nivel = "medio";
+                texto = "Médio";
         }else{
-                rotulo = "🟢 Baixo";
+                nivel = "baixo";
+                texto = "Baixo";
         }
 
-        return { valor, rotulo };
+        return { valor, nivel, texto };
+}
+
+// Selo colorido reutilizável (substitui os antigos emojis 🔴🟡🟢)
+function selo(texto, nivel){
+        return `<span class="selo selo-${nivel}">${texto}</span>`;
 }
 
 const MODO_DESENVOLVIMENTO = true;
@@ -240,14 +248,12 @@ function renderizarProduto(produto){
                 `Por: R$ ${formatarPreco(produto.precoAtual)}`;
         document.getElementById("imagem").src = produto.imagem;
         document.getElementById("imagem").style.display = "block";
-        document.getElementById("desconto").innerHTML =
-                `${obterRotuloOferta(produto.desconto)} - ${produto.desconto}% OFF`;
         document.getElementById("descricao").value =
                 produto.descricao;
 
         const score = calcularScore(produto);
-        document.getElementById("scoreOferta").innerHTML =
-                `⭐ Score: <b>${score.valor}</b> ${score.rotulo}`;
+        document.getElementById("infoOferta").innerHTML =
+                `${produto.desconto}% OFF · Score ${score.valor} ${selo(score.texto, score.nivel)}`;
 };
 
 function salvarDescricaoAtual(){
@@ -278,79 +284,32 @@ function obterRotuloOferta(desconto){
         if(desconto >= 60){
                 return "💥 Super Oferta";
         }
-        if(desconto >= 40){
-                return "🔥 Oferta";
-        }
         return "🔥 Oferta";
 }
 
-// OF-018: modelos diferentes de legenda
-const MODELOS_LEGENDA = [
-        {
-                nome: "Padrão",
-                gerar: (p) => `${obterRotuloOferta(p.desconto)}
-
-${obterIconeCategoria(p.nome)} ${p.nome}
-
-🔥 ${p.desconto}% OFF
-
-💰 De R$ ${formatarPreco(p.precoOriginal)}
-✅ Por apenas R$ ${formatarPreco(p.precoAtual)}
-
-🛍️ Compre aqui:
-${p.url}
-
-🏃 Aproveite antes que acabe!`
-        },
-        {
-                nome: "Direto",
-                gerar: (p) => `${obterRotuloOferta(p.desconto)}
-${obterIconeCategoria(p.nome)} ${p.nome}
-
-De R$ ${formatarPreco(p.precoOriginal)} por apenas R$ ${formatarPreco(p.precoAtual)} (${p.desconto}% OFF)
-
-👉 Garanta o seu:
-${p.url}
-
-⏰ Estoque limitado!`
-        },
-        {
-                nome: "Emocional",
-                gerar: (p) => `Apaixonada por um look assim? 😍
-
-${obterIconeCategoria(p.nome)} ${p.nome} está com ${p.desconto}% de desconto!
-
-De R$ ${formatarPreco(p.precoOriginal)}
-Por R$ ${formatarPreco(p.precoAtual)}
-
-Corre que é por tempo limitado:
-${p.url}`
-        },
-        {
-                nome: "Destaques",
-                gerar: (p) => `${obterRotuloOferta(p.desconto)}
-
-✔️ ${obterIconeCategoria(p.nome)} ${p.nome}
-✔️ ${p.desconto}% de desconto
-✔️ De R$ ${formatarPreco(p.precoOriginal)} → R$ ${formatarPreco(p.precoAtual)}
-
-📲 ${p.url}`
-        }
-];
-
-let modeloLegendaAtual = localStorage.getItem("modeloLegendaOfertaFlow") || "auto";
-
-function definirModeloLegenda(valor){
-        modeloLegendaAtual = valor;
-        localStorage.setItem("modeloLegendaOfertaFlow", valor);
+// Escapa os caracteres reservados do MarkdownV2 (. - ! ( ) etc.), senão o Telegram
+// rejeita a mensagem inteira em vez de só exibir errado.
+function escaparMarkdownV2(texto){
+        return String(texto ?? "").replace(/([_*\[\]()~`>#+\-=|{}.!\\])/g, "\\$1");
 }
 
+// Legenda única e padronizada: Tipo de oferta / Descrição / Desconto / De (riscado) / Por (negrito) / Link
 function gerarDescricao(produto){
-        const indice = modeloLegendaAtual === "auto"
-                ? Math.floor(Math.random() * MODELOS_LEGENDA.length)
-                : parseInt(modeloLegendaAtual);
+        const nome = escaparMarkdownV2(`${obterIconeCategoria(produto.nome)} ${produto.nome}`);
+        const precoOriginal = escaparMarkdownV2(formatarPreco(produto.precoOriginal));
+        const precoAtual = escaparMarkdownV2(formatarPreco(produto.precoAtual));
+        const url = escaparMarkdownV2(produto.url);
 
-        return MODELOS_LEGENDA[indice].gerar(produto);
+        return `${obterRotuloOferta(produto.desconto)}
+
+${nome}
+
+🔻 ${produto.desconto}% OFF
+
+De: ~R$ ${precoOriginal}~
+Por: *R$ ${precoAtual}*
+
+🔗 ${url}`;
 }
 
 // OF-016: Oferta do Dia = produto com maior Score da Oferta na fila atual
@@ -374,19 +333,21 @@ function obterOfertaDoDia(){
 }
 
 function gerarDescricaoOfertaDoDia(produto){
-        return `🏆 OFERTA DO DIA 🏆
+        const nome = escaparMarkdownV2(`${obterIconeCategoria(produto.nome)} ${produto.nome}`);
+        const precoOriginal = escaparMarkdownV2(formatarPreco(produto.precoOriginal));
+        const precoAtual = escaparMarkdownV2(formatarPreco(produto.precoAtual));
+        const url = escaparMarkdownV2(produto.url);
 
-${obterIconeCategoria(produto.nome)} ${produto.nome}
+        return `🏆 OFERTA DO DIA
 
-🔥 ${produto.desconto}% OFF
+${nome}
 
-💰 De R$ ${formatarPreco(produto.precoOriginal)}
-✅ Por apenas R$ ${formatarPreco(produto.precoAtual)}
+🔻 ${produto.desconto}% OFF
 
-🛍️ Compre aqui:
-${produto.url}
+De: ~R$ ${precoOriginal}~
+Por: *R$ ${precoAtual}*
 
-🏃 Corre que é por tempo limitado!`;
+🔗 ${url}`;
 }
 
 function atualizarOfertaDoDia(){
@@ -395,7 +356,7 @@ function atualizarOfertaDoDia(){
         const oferta = obterOfertaDoDia();
 
         if(!oferta){
-                elemento.innerHTML = "⚪ Nenhuma oferta na fila.";
+                elemento.innerHTML = "Nenhuma oferta na fila.";
                 botao.disabled = true;
                 return;
         }
@@ -404,8 +365,7 @@ function atualizarOfertaDoDia(){
 
         elemento.innerHTML = `
                 <strong>${obterIconeCategoria(oferta.nome)} ${oferta.nome}</strong><br>
-                ${oferta.marca ? "🏷️ " + oferta.marca + "<br>" : ""}
-                🔥 ${oferta.desconto}% OFF &nbsp; ⭐ Score: ${score.valor} ${score.rotulo}
+                ${oferta.marca ? oferta.marca + " · " : ""}${oferta.desconto}% OFF · Score ${score.valor} ${selo(score.texto, score.nivel)}
         `;
         botao.disabled = false;
 }
@@ -413,8 +373,9 @@ function atualizarOfertaDoDia(){
 // OF-040: garante que o link do produto sempre apareça na legenda enviada,
 // mesmo que a descrição tenha sido editada manualmente e o link removido por engano
 function garantirUrlNaDescricao(produto){
-        if(produto.url && !produto.descricao.includes(produto.url)){
-                produto.descricao = `${produto.descricao}\n\n🔗 ${produto.url}`;
+        const urlEscapada = escaparMarkdownV2(produto.url);
+        if(produto.url && !produto.descricao.includes(urlEscapada)){
+                produto.descricao = `${produto.descricao}\n\n🔗 ${urlEscapada}`;
         }
         return produto;
 }
@@ -443,7 +404,6 @@ async function publicarOfertaDoDia(){
                 adicionarHistorico(`🏆 ${oferta.nome} (Oferta do Dia)`);
                 produtos.splice(indice, 1);
                 publicados++;
-                atualizarProgresso();
                 if(produtos.length > 0){
                         selecionarProduto(Math.min(indice, produtos.length - 1));
                 }else{
@@ -652,7 +612,7 @@ function renderizarPreparacaoDia(itens, naoCoube){
         const lista = document.getElementById("listaHorariosDia");
 
         if(itens.length === 0){
-                resultado.innerHTML = "⚪ Nenhum produto preparado.";
+                resultado.innerHTML = "Nenhum produto preparado.";
                 lista.innerHTML = "";
                 return;
         }
@@ -667,14 +627,11 @@ function renderizarPreparacaoDia(itens, naoCoube){
 
         let aviso = "";
         if(naoCoube > 0){
-                aviso = `<br>⚠️ ${naoCoube} produto${naoCoube !== 1 ? "s" : ""} não coube${naoCoube !== 1 ? "ram" : ""} no período (09h–21h). Reduza a fila, diminua o intervalo ou prepare o restante amanhã.`;
+                aviso = `<br>${naoCoube} produto${naoCoube !== 1 ? "s" : ""} não coube${naoCoube !== 1 ? "ram" : ""} no período (09h–21h). Reduza a fila, diminua o intervalo ou prepare o restante amanhã.`;
         }
 
         resultado.innerHTML = `
-                📦 ${itens.length} produto${itens.length !== 1 ? "s" : ""} agendado${itens.length !== 1 ? "s" : ""}<br>
-                🕐 Primeira postagem: <b>${primeiro}</b><br>
-                🕐 Última postagem: <b>${ultimo}</b><br>
-                ⏱ Duração total: <b>${horasDuracao}h${minutosDuracao > 0 ? minutosDuracao + "min" : ""}</b>
+                ${itens.length} produto${itens.length !== 1 ? "s" : ""} · ${primeiro} às ${ultimo} · dura ${horasDuracao}h${minutosDuracao > 0 ? minutosDuracao + "min" : ""}
                 ${aviso}
         `;
 
@@ -770,9 +727,6 @@ async function buscarProduto() {
                                 ((original - atual) / original) * 100
                         );
                         
-                        document.getElementById("desconto").innerHTML =
-                                `${obterRotuloOferta(desconto)} - ${desconto}% OFF`;
-                        
                         produtoAtual = {
                                 url: url,
                                 nome: nomeLimpo,
@@ -802,7 +756,6 @@ async function buscarProduto() {
         }
         publicados = 0;
         
-        atualizarProgresso();
 
         document.getElementById("statusBusca").style.display = "none";
         
@@ -826,7 +779,7 @@ function atualizarListaProdutos(){
                 <span class="arrastar">⠿</span>
                 <strong>${index + 1}º</strong> - ${obterIconeCategoria(produto.nome)} ${produto.nome}
                 <br>
-                ${obterRotuloOferta(produto.desconto)} - ${produto.desconto}% OFF &nbsp; ⭐ Score: ${score.valor} ${score.rotulo}
+                ${produto.desconto}% OFF · Score ${score.valor} ${selo(score.texto, score.nivel)}
                 <br><br>
                 
                 <button onclick="selecionarProduto(${index})">
@@ -847,7 +800,7 @@ function atualizarListaProdutos(){
                 `;
         });
         document.getElementById("tituloFila").innerHTML =
-                `📦 Produtos carregados (${produtos.length})`;
+                `Produtos carregados (${produtos.length})`;
 
         ativarArrastarSoltar();
 }
@@ -1038,7 +991,7 @@ function registrarPublicacao(produto, sucesso){
                 atualizarHistoricoPublicacoes();
         }else{
                 falhas++;
-                logErros.unshift(`${hora} - ❌ ${produto.nome}`);
+                logErros.unshift(`${hora} - Falha: ${produto.nome}`);
         }
 }
 
@@ -1065,7 +1018,6 @@ async function publicarSelecionado(){
                 adicionarHistorico(`✅ ${produto.nome}`);
                 produtos.splice(indice, 1);
                 publicados++;
-                atualizarProgresso();
                 if(produtos.length > 0){
                         selecionarProduto(Math.min(indice, produtos.length - 1));
                 }else{
@@ -1104,7 +1056,6 @@ async function publicarProximo(){
                 adicionarHistorico(`✅ ${produto.nome}`);
                 produtos.shift();
                 publicados++;
-                atualizarProgresso();
                 if(produtos.length > 0){
                         selecionarProduto(0);
                 }else{
@@ -1119,32 +1070,13 @@ async function publicarProximo(){
         }
 }
 
-function atualizarContadorFila(){
-        totalFila = produtos.length + publicados;
-        document.getElementById("contadorFila").innerHTML =
-                `📦 Fila: ${produtos.length} produto${produtos.length !== 1 ? "s" : ""}`;
-}
-
-function atualizarProgresso(){
-        document.getElementById("barraProgresso").max =
-                totalFila;
-        document.getElementById("barraProgresso").value =
-                publicados;
-        document.getElementById("progressoTexto").innerHTML =
-                `${publicados} de ${totalFila} publicados`;
-}
-
 function atualizarInterface(){
         atualizarListaProdutos();
-        atualizarContadorFila();
-        atualizarResumo();
         atualizarProximoProduto();
         atualizarEstatisticasDesconto();
-        atualizarTempoEstimado();
         salvarFila();
         atualizarQualidadeFila();
         atualizarEconomiaFila();
-        atualizarEstatisticasSessao();
         atualizarPainelControle();
         atualizarOfertaDoDia();
         salvarSessao();
@@ -1159,10 +1091,10 @@ function atualizarPainelControle(){
                 : "Nenhuma ainda";
 
         painel.innerHTML = `
-                ⏳ Pendentes: <b>${produtos.length}</b><br>
-                ✅ Publicados: <b>${publicados}</b><br>
-                ❌ Falhas: <b>${falhas}</b><br>
-                🕐 Última publicação: <b>${ultima}</b>
+                Pendentes: <b>${produtos.length}</b><br>
+                Publicados: <b>${publicados}</b><br>
+                Falhas: <b>${falhas}</b><br>
+                Última publicação: <b>${ultima}</b>
         `;
 
         const log = document.getElementById("logErros");
@@ -1170,34 +1102,10 @@ function atualizarPainelControle(){
                 log.innerHTML = "";
         }else{
                 log.innerHTML = `
-                        <br>⚠️ <b>Log de erros</b><br>
+                        <br><b>Log de erros</b><br>
                         ${logErros.join("<br>")}
                 `;
         }
-}
-
-function atualizarResumo(){
-
-    const total = produtos.length;
-
-    let mediaDesconto = 0;
-
-    if(total > 0){
-        mediaDesconto =
-            Math.round(
-                produtos.reduce(
-                    (soma, produto) => soma + produto.desconto,
-                    0
-                ) / total
-            );
-    }
-
-    document.getElementById("resumoFila").innerHTML = `
-        📦 Produtos: <b>${total}</b><br>
-        ✅ Publicados: <b>${publicados}</b><br>
-        ⏳ Restantes: <b>${total}</b><br>
-        🔥 Desconto médio: <b>${mediaDesconto}%</b>
-    `;
 }
 
 function atualizarProximoProduto(){
@@ -1208,14 +1116,6 @@ function atualizarProximoProduto(){
                 return;
         }
         elemento.innerHTML = `${obterIconeCategoria(produtos[0].nome)} ${produtos[0].nome}`;
-}
-
-function atualizarTempoEstimado(){
-
-    const minutos = produtos.length * 2;
-
-    document.getElementById("tempoEstimado").innerHTML =
-        `⏱ Tempo estimado: ${minutos} min`;
 }
 
 async function copiarDescricao(){
@@ -1255,12 +1155,8 @@ function atualizarEstatisticasDesconto(){
                 }
         }
 
-        document.getElementById("estatisticasDesconto").innerHTML = `
-        🔥 40-59%: ${faixa40}<br>
-        💥 60-69%: ${faixa60}<br>
-        🚨 70-79%: ${faixa70}<br>
-        👑 80%+: ${faixa80}
-        `;
+        document.getElementById("estatisticasDesconto").innerHTML =
+                `Faixas: 40-59% ${faixa40} · 60-69% ${faixa60} · 70-79% ${faixa70} · 80%+ ${faixa80}`;
 }
 
 function bloquearInterface(){
@@ -1342,15 +1238,13 @@ function atualizarHistoricoPublicacoes(){
         const elemento = document.getElementById("historicoPublicacoes");
 
         if(historicoPublicacoes.length === 0){
-                elemento.innerHTML = "⚪ Nenhuma publicação registrada ainda.";
+                elemento.innerHTML = "Nenhuma publicação registrada ainda.";
                 return;
         }
 
         elemento.innerHTML = historicoPublicacoes.map(item => `
                 <div class="produto-item">
-                        <strong>${item.data} ${item.hora}</strong><br>
-                        ${item.nome}${item.marca ? " — " + item.marca : ""}<br>
-                        🔥 ${item.desconto}% OFF &nbsp; ⭐ Score: ${item.score}
+                        <strong>${item.data} ${item.hora}</strong> — ${item.nome}${item.marca ? " · " + item.marca : ""}
                 </div>
         `).join("");
 }
@@ -1407,7 +1301,7 @@ function atualizarQualidadeFila(){
 
     if(produtos.length === 0){
         document.getElementById("qualidadeFila").innerHTML =
-            "⚪ Fila vazia";
+            "Fila vazia";
         return;
     }
 
@@ -1420,15 +1314,15 @@ function atualizarQualidadeFila(){
     let qualidade = "";
 
     if(media >= 80){
-        qualidade = "🔴 Excelente";
+        qualidade = selo("Excelente", "alto");
     }else if(media >= 60){
-        qualidade = "🟡 Boa";
+        qualidade = selo("Boa", "medio");
     }else{
-        qualidade = "🟢 Regular";
+        qualidade = selo("Regular", "baixo");
     }
 
     document.getElementById("qualidadeFila").innerHTML =
-        `Qualidade da fila: <b>${qualidade}</b>`;
+        `Qualidade da fila: ${qualidade}`;
 }
 
 function atualizarEconomiaFila(){
@@ -1442,23 +1336,11 @@ function atualizarEconomiaFila(){
     }
 
     document.getElementById("economiaFila").innerHTML =
-        `💰 Economia total: <b>R$ ${formatarPreco(economia)}</b>`;
+        `Economia total: <b>R$ ${formatarPreco(economia)}</b>`;
 }
 
-function atualizarEstatisticasSessao(){
-
-    document.getElementById("estatisticasSessao").innerHTML = `
-        <br>
-        📊 Resumo da sessão<br>
-        ✅ Publicações: <b>${publicados}</b><br>
-        📦 Produtos restantes: <b>${produtos.length}</b>
-    `;
-
-}
 document.getElementById("descricao")
         .addEventListener("input", salvarDescricaoAtual);
-
-document.getElementById("modeloLegenda").value = modeloLegendaAtual;
 
 carregarHistoricoPublicacoes();
 carregarFila();
