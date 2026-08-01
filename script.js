@@ -526,20 +526,25 @@ async function prepararDia(){
         }
 
         const minutoFimBase = DIA_HORA_FIM * 60;
+        const minutoInicioBase = DIA_HORA_INICIO * 60;
         let minutoInicio;
 
         if(manterAnteriores && diaPreparado.length > 0){
                 const ultimoItem = diaPreparado[diaPreparado.length - 1];
                 const [h, m] = ultimoItem.horario.split(":").map(Number);
                 const jitter = Math.round((Math.random() * 2 - 1) * DIA_VARIACAO);
-                minutoInicio = Math.min((h * 60 + m) + DIA_INTERVALO_BASE + jitter, minutoFimBase);
+                const proximoMinuto = (h * 60 + m) + DIA_INTERVALO_BASE + jitter;
+
+                // Se não coube mais no período de hoje, começa às 9h do próximo dia em vez de espremer no fim.
+                minutoInicio = proximoMinuto < minutoFimBase ? proximoMinuto : minutoInicioBase;
         }else{
                 const agora = new Date();
                 const agoraMin = agora.getHours() * 60 + agora.getMinutes();
-                const minutoInicioBase = DIA_HORA_INICIO * 60;
 
-                minutoInicio = agoraMin > minutoInicioBase
-                        ? Math.min(Math.ceil(agoraMin / 5) * 5, minutoFimBase)
+                // Dentro do período (9h-21h): começa a partir de agora. Fora do período (antes das 9h
+                // ou depois das 21h): começa às 9h (hoje, se ainda não chegou lá, ou do próximo dia).
+                minutoInicio = (agoraMin > minutoInicioBase && agoraMin < minutoFimBase)
+                        ? Math.ceil(agoraMin / 5) * 5
                         : minutoInicioBase;
         }
 
@@ -1155,8 +1160,12 @@ function atualizarEstatisticasDesconto(){
                 }
         }
 
-        document.getElementById("estatisticasDesconto").innerHTML =
-                `Faixas: 40-59% ${faixa40} · 60-69% ${faixa60} · 70-79% ${faixa70} · 80%+ ${faixa80}`;
+        document.getElementById("estatisticasDesconto").innerHTML = `
+                40-59%: <b>${faixa40}</b><br>
+                60-69%: <b>${faixa60}</b><br>
+                70-79%: <b>${faixa70}</b><br>
+                80%+: <b>${faixa80}</b>
+        `;
 }
 
 function bloquearInterface(){
