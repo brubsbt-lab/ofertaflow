@@ -1161,10 +1161,10 @@ function atualizarEstatisticasDesconto(){
         }
 
         document.getElementById("estatisticasDesconto").innerHTML = `
-                40-59%: <b>${faixa40}</b><br>
-                60-69%: <b>${faixa60}</b><br>
-                70-79%: <b>${faixa70}</b><br>
-                80%+: <b>${faixa80}</b>
+                Oferta: <b>${faixa40}</b><br>
+                Super Oferta: <b>${faixa60}</b><br>
+                Oferta Relâmpago: <b>${faixa70}</b><br>
+                Oferta Imperdível: <b>${faixa80}</b>
         `;
 }
 
