@@ -118,30 +118,6 @@ function obterIconeCategoria(nome){
 }
 
 // OF-109: hashtags automáticas com base na categoria, marca e faixa de desconto
-function obterHashtags(produto){
-        const nomeMin = (produto.nome || "").toLowerCase();
-        const itemCategoria = ICONE_CATEGORIA.find(item => nomeMin.includes(item.termo));
-        const categoriaTag = itemCategoria ? itemCategoria.hashtag : "calcados";
-
-        const faixaTags = {
-                oferta: "promocao",
-                super: "superoferta",
-                imperdivel: "ofertaimperdivel",
-                relampago: "ofertarelampago"
-        };
-
-        const tags = [
-                "#" + categoriaTag,
-                "#" + faixaTags[obterFaixaFiltro(produto.desconto)]
-        ];
-
-        if(produto.marca){
-                tags.push("#" + produto.marca.replace(/[^a-zA-ZÀ-ú0-9]/g, ""));
-        }
-
-        return tags.join(" ");
-}
-
 function calcularScore(produto){
         const categoria = CATEGORIA_MARCA[produto.marca];
         const pesoMarca = categoria ? PESO_CATEGORIA[categoria] : PESO_MARCA_PADRAO;
@@ -168,7 +144,7 @@ function selo(texto, nivel){
         return `<span class="selo selo-${nivel}">${texto}</span>`;
 }
 
-const MODO_DESENVOLVIMENTO = true;
+let MODO_DESENVOLVIMENTO = true;
 
 const produtosTeste = [
         {
@@ -320,24 +296,11 @@ function escaparMarkdownV2(texto){
 
 // Legenda única e padronizada: Tipo de oferta / Descrição / Desconto / De (riscado) / Por (negrito) / Link
 // OF-107: call-to-action automático conforme a faixa de desconto
-function obterCTAOferta(desconto){
-        const faixa = obterFaixaFiltro(desconto);
-        const ctas = {
-                oferta: "Aproveite antes que acabe!",
-                super: "Corre que é por tempo limitado!",
-                imperdivel: "Não fica de fora dessa!",
-                relampago: "Últimas unidades, corre!"
-        };
-        return ctas[faixa];
-}
-
 function gerarDescricao(produto){
         const nome = escaparMarkdownV2(`${obterIconeCategoria(produto.nome)} ${produto.nome}`);
         const precoOriginal = escaparMarkdownV2(formatarPreco(produto.precoOriginal));
         const precoAtual = escaparMarkdownV2(formatarPreco(produto.precoAtual));
         const url = escaparMarkdownV2(produto.url);
-        const cta = escaparMarkdownV2(obterCTAOferta(produto.desconto));
-        const hashtags = escaparMarkdownV2(obterHashtags(produto));
 
         return `${obterRotuloOferta(produto.desconto)}
 
@@ -348,11 +311,7 @@ ${nome}
 De: ~R$ ${precoOriginal}~
 Por: *R$ ${precoAtual}*
 
-🔗 ${url}
-
-${cta}
-
-${hashtags}`;
+🔗 ${url}`;
 }
 
 // OF-016: Oferta do Dia = produto com maior Score da Oferta na fila atual
@@ -380,7 +339,6 @@ function gerarDescricaoOfertaDoDia(produto){
         const precoOriginal = escaparMarkdownV2(formatarPreco(produto.precoOriginal));
         const precoAtual = escaparMarkdownV2(formatarPreco(produto.precoAtual));
         const url = escaparMarkdownV2(produto.url);
-        const hashtags = escaparMarkdownV2(obterHashtags(produto));
 
         return `🏆 OFERTA DO DIA
 
@@ -391,9 +349,7 @@ ${nome}
 De: ~R$ ${precoOriginal}~
 Por: *R$ ${precoAtual}*
 
-🔗 ${url}
-
-${hashtags}`;
+🔗 ${url}`;
 }
 
 function atualizarOfertaDoDia(){
@@ -1691,6 +1647,34 @@ function alternarTema(){
         document.getElementById("btnTema").textContent = escuro ? "Tema claro" : "Tema escuro";
 }
 
+// Alternar rapidamente entre Modo Desenvolvimento (simula publicação) e Ao Vivo (publica de verdade)
+function alternarModoDesenvolvimento(){
+        if(MODO_DESENVOLVIMENTO){
+                if(!confirm("Isso vai DESATIVAR o Modo Desenvolvimento.\n\nAs próximas publicações vão sair de verdade no Telegram. Continuar?")){
+                        return;
+                }
+        }
+
+        MODO_DESENVOLVIMENTO = !MODO_DESENVOLVIMENTO;
+        localStorage.setItem("modoDesenvolvimentoOfertaFlow", MODO_DESENVOLVIMENTO ? "on" : "off");
+        atualizarBotaoModoDesenvolvimento();
+        mostrarToast(MODO_DESENVOLVIMENTO ? "Modo Desenvolvimento ativado" : "⚠️ Modo Ao Vivo ativado — publicações são reais");
+}
+
+function atualizarBotaoModoDesenvolvimento(){
+        const botao = document.getElementById("btnModoDev");
+        botao.textContent = MODO_DESENVOLVIMENTO ? "Modo: Desenvolvimento" : "Modo: Ao Vivo";
+        botao.classList.toggle("aviso-ao-vivo", !MODO_DESENVOLVIMENTO);
+}
+
+function carregarModoDesenvolvimento(){
+        const salvo = localStorage.getItem("modoDesenvolvimentoOfertaFlow");
+        if(salvo !== null){
+                MODO_DESENVOLVIMENTO = salvo === "on";
+        }
+        atualizarBotaoModoDesenvolvimento();
+}
+
 function carregarTema(){
         const salvo = localStorage.getItem("temaOfertaFlow");
         if(salvo === "escuro"){
@@ -1699,6 +1683,7 @@ function carregarTema(){
         }
 }
 
+carregarModoDesenvolvimento();
 carregarTema();
 carregarHistoricoPublicacoes();
 carregarFila();

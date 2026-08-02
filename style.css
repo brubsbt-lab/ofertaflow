@@ -70,9 +70,14 @@ body{
     margin-bottom:4px;
 }
 
-#btnTema{
+.botoes-topo{
     position:absolute;
     right:0;
+    display:flex;
+    gap:6px;
+}
+
+#btnModoDev, #btnTema{
     width:auto;
     margin:0;
     padding:6px 12px;
@@ -82,7 +87,13 @@ body{
     border:1px solid var(--cor-borda);
 }
 
-#btnTema:hover{
+#btnModoDev.aviso-ao-vivo{
+    color:var(--cor-selo-alto-texto);
+    border-color:var(--cor-selo-alto-texto);
+    font-weight:600;
+}
+
+#btnTema:hover, #btnModoDev:hover{
     background:var(--cor-input-fundo);
 }
 
