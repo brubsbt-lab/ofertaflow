@@ -1,12 +1,20 @@
-const CACHE_NOME = "ofertaflow-v1";
+const CACHE_NOME = "ofertaflow-v2";
 const ARQUIVOS_ESSENCIAIS = [
     "./",
     "./index.html",
     "./style.css",
-    "./script.js",
     "./manifest.json",
     "./icon-192.png",
-    "./icon-512.png"
+    "./icon-512.png",
+    "./js/config.js",
+    "./js/utilitarios.js",
+    "./js/produto.js",
+    "./js/fila.js",
+    "./js/publicacao.js",
+    "./js/painel.js",
+    "./js/armazenamento.js",
+    "./js/interface.js",
+    "./js/principal.js"
 ];
 
 self.addEventListener("install", (evento) => {
