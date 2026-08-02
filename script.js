@@ -290,17 +290,22 @@ function obterRotuloOferta(desconto){
 
 // Escapa os caracteres reservados do MarkdownV2 (. - ! ( ) etc.), senão o Telegram
 // rejeita a mensagem inteira em vez de só exibir errado.
-function escaparMarkdownV2(texto){
-        return String(texto ?? "").replace(/([_*\[\]()~`>#+\-=|{}.!\\])/g, "\\$1");
+// Parse Mode = HTML no Telegram: só precisa escapar & < > " pra não quebrar as tags de formatação
+function escaparHTML(texto){
+        return String(texto ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
 }
 
 // Legenda única e padronizada: Tipo de oferta / Descrição / Desconto / De (riscado) / Por (negrito) / Link
 // OF-107: call-to-action automático conforme a faixa de desconto
 function gerarDescricao(produto){
-        const nome = escaparMarkdownV2(`${obterIconeCategoria(produto.nome)} ${produto.nome}`);
-        const precoOriginal = escaparMarkdownV2(formatarPreco(produto.precoOriginal));
-        const precoAtual = escaparMarkdownV2(formatarPreco(produto.precoAtual));
-        const url = escaparMarkdownV2(produto.url);
+        const nome = escaparHTML(`${obterIconeCategoria(produto.nome)} ${produto.nome}`);
+        const precoOriginal = escaparHTML(formatarPreco(produto.precoOriginal));
+        const precoAtual = escaparHTML(formatarPreco(produto.precoAtual));
+        const url = escaparHTML(produto.url);
 
         return `${obterRotuloOferta(produto.desconto)}
 
@@ -308,10 +313,10 @@ ${nome}
 
 🔻 ${produto.desconto}% OFF
 
-De: ~R$ ${precoOriginal}~
-Por: *R$ ${precoAtual}*
+De: <s>R$ ${precoOriginal}</s>
+Por: <b>R$ ${precoAtual}</b>
 
-🔗 ${url}`;
+🔗 <a href="${url}">Ver oferta</a>`;
 }
 
 // OF-016: Oferta do Dia = produto com maior Score da Oferta na fila atual
@@ -335,10 +340,10 @@ function obterOfertaDoDia(){
 }
 
 function gerarDescricaoOfertaDoDia(produto){
-        const nome = escaparMarkdownV2(`${obterIconeCategoria(produto.nome)} ${produto.nome}`);
-        const precoOriginal = escaparMarkdownV2(formatarPreco(produto.precoOriginal));
-        const precoAtual = escaparMarkdownV2(formatarPreco(produto.precoAtual));
-        const url = escaparMarkdownV2(produto.url);
+        const nome = escaparHTML(`${obterIconeCategoria(produto.nome)} ${produto.nome}`);
+        const precoOriginal = escaparHTML(formatarPreco(produto.precoOriginal));
+        const precoAtual = escaparHTML(formatarPreco(produto.precoAtual));
+        const url = escaparHTML(produto.url);
 
         return `🏆 OFERTA DO DIA
 
@@ -346,10 +351,10 @@ ${nome}
 
 🔻 ${produto.desconto}% OFF
 
-De: ~R$ ${precoOriginal}~
-Por: *R$ ${precoAtual}*
+De: <s>R$ ${precoOriginal}</s>
+Por: <b>R$ ${precoAtual}</b>
 
-🔗 ${url}`;
+🔗 <a href="${url}">Ver oferta</a>`;
 }
 
 function atualizarOfertaDoDia(){
@@ -375,9 +380,9 @@ function atualizarOfertaDoDia(){
 // OF-040: garante que o link do produto sempre apareça na legenda enviada,
 // mesmo que a descrição tenha sido editada manualmente e o link removido por engano
 function garantirUrlNaDescricao(produto){
-        const urlEscapada = escaparMarkdownV2(produto.url);
+        const urlEscapada = escaparHTML(produto.url);
         if(produto.url && !produto.descricao.includes(urlEscapada)){
-                produto.descricao = `${produto.descricao}\n\n🔗 ${urlEscapada}`;
+                produto.descricao = `${produto.descricao}\n\n🔗 <a href="${urlEscapada}">Ver oferta</a>`;
         }
         return produto;
 }
@@ -1287,10 +1292,7 @@ function atualizarProximoProduto(){
 
 // OF-110: pré-visualização de como a legenda vai aparecer no Telegram (negrito/riscado renderizados)
 function renderizarPreviaMarkdown(texto){
-        let html = texto.replace(/\\([_*\[\]()~`>#+\-=|{}.!\\])/g, "$1");
-        html = html.replace(/\*(.+?)\*/g, "<b>$1</b>");
-        html = html.replace(/~(.+?)~/g, "<s>$1</s>");
-        return html.replace(/\n/g, "<br>");
+        return texto.replace(/\n/g, "<br>");
 }
 
 function mostrarPreviaPublicacao(){
