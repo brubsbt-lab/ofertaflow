@@ -24,7 +24,7 @@ function carregarFila(){
                 const indice = (indiceSalvo !== null && indiceSalvo !== undefined && produtos[indiceSalvo])
                         ? indiceSalvo
                         : 0;
-                selecionarProduto(indice);
+                selecionarProduto(indice, true);
         }
 
         if(diaPreparado.length > 0){
@@ -131,7 +131,7 @@ function importarBackup(evento){
                         atualizarHistoricoPublicacoes();
                         atualizarInterface();
                         if(produtos.length > 0){
-                                selecionarProduto(0);
+                                selecionarProduto(0, true);
                         }
                         if(diaPreparado.length > 0){
                                 renderizarPreparacaoDia(diaPreparado, 0);

@@ -95,7 +95,7 @@ async function publicarSelecionado(){
                 produtos.splice(indice, 1);
                 publicados++;
                 if(produtos.length > 0){
-                        selecionarProduto(Math.min(indice, produtos.length - 1));
+                        selecionarProduto(Math.min(indice, produtos.length - 1), true);
                 }else{
                         produtoAtual = null;
                         indiceSelecionado = -1;
@@ -133,7 +133,7 @@ async function publicarProximo(){
                 produtos.shift();
                 publicados++;
                 if(produtos.length > 0){
-                        selecionarProduto(0);
+                        selecionarProduto(0, true);
                 }else{
                         produtoAtual = null;
                         indiceSelecionado = -1;
@@ -171,7 +171,7 @@ async function publicarOfertaDoDia(){
                 produtos.splice(indice, 1);
                 publicados++;
                 if(produtos.length > 0){
-                        selecionarProduto(Math.min(indice, produtos.length - 1));
+                        selecionarProduto(Math.min(indice, produtos.length - 1), true);
                 }else{
                         produtoAtual = null;
                         indiceSelecionado = -1;

@@ -11,8 +11,10 @@ function limparFila(){
         atualizarInterface();
 }
 
-function selecionarProduto(indice){
-        salvarDescricaoAtual();
+function selecionarProduto(indice, pularSalvar){
+        if(!pularSalvar){
+                salvarDescricaoAtual();
+        }
         indiceSelecionado = indice;
         const itemSelecionado =
                 document.querySelector(".produtoSelecionado");
@@ -66,7 +68,7 @@ function removerProduto(indice){
     atualizarInterface();
 
     if(produtos.length > 0){
-        selecionarProduto(0);
+        selecionarProduto(0, true);
     }else{
         produtoAtual = null;
         indiceSelecionado = -1;
@@ -383,7 +385,7 @@ async function buscarProduto() {
         }
         if(produtos.length > 0){
 
-    selecionarProduto(0);
+    selecionarProduto(0, true);
         }
         publicados = 0;
         
