@@ -1529,6 +1529,77 @@ function limparHistoricoPublicacoes(){
         atualizarHistoricoPublicacoes();
 }
 
+// OF-086/112/113: backup completo (fila, preparar o dia e histórico) em um arquivo JSON
+function exportarBackup(){
+        const dados = {
+                versao: 1,
+                exportadoEm: new Date().toISOString(),
+                produtos: produtos,
+                diaPreparado: diaPreparado,
+                historicoPublicacoes: historicoPublicacoes,
+                publicados: publicados,
+                falhas: falhas,
+                ultimaPublicacao: ultimaPublicacao,
+                logErros: logErros
+        };
+
+        const blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const dataArquivo = new Date().toISOString().slice(0, 10);
+
+        link.href = url;
+        link.download = `ofertaflow-backup-${dataArquivo}.json`;
+        link.click();
+
+        URL.revokeObjectURL(url);
+        mostrarToast("Backup exportado!");
+}
+
+function importarBackup(evento){
+        const arquivo = evento.target.files[0];
+        if(!arquivo){
+                return;
+        }
+
+        const leitor = new FileReader();
+        leitor.onload = () => {
+                try{
+                        const dados = JSON.parse(leitor.result);
+
+                        if(!confirm("Isso vai substituir a fila, o Preparar o Dia e o histórico atuais pelos do backup. Continuar?")){
+                                return;
+                        }
+
+                        produtos = dados.produtos || [];
+                        diaPreparado = dados.diaPreparado || [];
+                        historicoPublicacoes = dados.historicoPublicacoes || [];
+                        publicados = dados.publicados || 0;
+                        falhas = dados.falhas || 0;
+                        ultimaPublicacao = dados.ultimaPublicacao || null;
+                        logErros = dados.logErros || [];
+                        indiceSelecionado = produtos.length > 0 ? 0 : -1;
+
+                        salvarHistoricoPublicacoes();
+                        atualizarHistoricoPublicacoes();
+                        atualizarInterface();
+                        if(produtos.length > 0){
+                                selecionarProduto(0);
+                        }
+                        if(diaPreparado.length > 0){
+                                renderizarPreparacaoDia(diaPreparado, 0);
+                        }
+
+                        mostrarToast("Backup importado!");
+                }catch(erro){
+                        console.error(erro);
+                        mostrarToast("Arquivo de backup inválido.", "erro");
+                }
+        };
+        leitor.readAsText(arquivo);
+        evento.target.value = "";
+}
+
 function carregarFila(){
         const indiceSalvo = carregarSessao();
 
