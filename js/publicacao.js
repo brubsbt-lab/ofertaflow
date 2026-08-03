@@ -20,13 +20,13 @@ async function publicarTelegram(produto){
 
     try{
         const resposta = await fetch(
-            "https://hook.us2.make.com/ziofxokbbynercs7pz56qwh1gunhvkml",
+            URL_WEBHOOK_MAKE,
             {
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json"
                 },
-                body: JSON.stringify(produto)
+                body: JSON.stringify({ tipo: "publicar_imediato", ...produto })
             }
         );
 
@@ -204,13 +204,13 @@ async function enviarDiaParaMake(){
 
         try{
                 const resposta = await fetch(
-                        "https://hook.us2.make.com/SUBSTITUA_PELO_WEBHOOK_DA_FILA_DO_DIA",
+                        URL_WEBHOOK_MAKE,
                         {
                                 method: "POST",
                                 headers: {
                                         "Content-Type": "application/json"
                                 },
-                                body: JSON.stringify({ itens: diaPreparado })
+                                body: JSON.stringify({ tipo: "fila_do_dia", itens: diaPreparado })
                         }
                 );
 

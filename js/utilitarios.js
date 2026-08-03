@@ -94,6 +94,14 @@ function minutosParaHora(minutos){
         return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
 }
 
+// ID único por item, necessário pra Data Store do Make identificar cada registro
+function gerarIdUnico(){
+        if(typeof crypto !== "undefined" && crypto.randomUUID){
+                return crypto.randomUUID();
+        }
+        return `id-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+}
+
 // Gera horários de postagem entre o início e o fim, variando o intervalo
 // para não ficar sempre exatamente de 30 em 30 minutos.
 function calcularHorarios(qtdProdutos, minutoInicio, minutoFim, intervaloBase, variacao){

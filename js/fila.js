@@ -323,7 +323,7 @@ async function buscarProduto() {
                                         ];
                         } else {
                                 const resposta = await fetch(
-                                        "https://hook.us2.make.com/9h9tic2oo03ftyghkomkjyu90if73i4w",
+                                        URL_WEBHOOK_MAKE,
                                         {
                                                 method: "POST",
                                                 headers: {
@@ -331,6 +331,7 @@ async function buscarProduto() {
                                                 },
                                                 
                                                 body: JSON.stringify({
+                                                        tipo: "buscar_produto",
                                                         url: url
                                                 })
                                         }
@@ -438,13 +439,13 @@ async function prepararDia(){
                                 dados = produtosTeste[produtosDoDia.length % produtosTeste.length];
                         }else{
                                 const resposta = await fetch(
-                                        "https://hook.us2.make.com/9h9tic2oo03ftyghkomkjyu90if73i4w",
+                                        URL_WEBHOOK_MAKE,
                                         {
                                                 method: "POST",
                                                 headers: {
                                                         "Content-Type": "application/json"
                                                 },
-                                                body: JSON.stringify({ url: url })
+                                                body: JSON.stringify({ tipo: "buscar_produto", url: url })
                                         }
                                 );
                                 dados = await resposta.json();
@@ -493,24 +494,37 @@ async function prepararDia(){
         const minutoFimBase = DIA_HORA_FIM * 60;
         const minutoInicioBase = DIA_HORA_INICIO * 60;
         let minutoInicio;
+        let diaOffsetInicio;
 
         if(manterAnteriores && diaPreparado.length > 0){
                 const ultimoItem = diaPreparado[diaPreparado.length - 1];
-                const [h, m] = ultimoItem.horario.split(":").map(Number);
                 const jitter = Math.round((Math.random() * 2 - 1) * DIA_VARIACAO);
-                const proximoMinuto = (h * 60 + m) + DIA_INTERVALO_BASE + jitter;
+                const proximoMinuto = ultimoItem.minutoDoDia + DIA_INTERVALO_BASE + jitter;
 
-                // Se não coube mais no período de hoje, começa às 9h do próximo dia em vez de espremer no fim.
-                minutoInicio = proximoMinuto < minutoFimBase ? proximoMinuto : minutoInicioBase;
+                // Se não coube mais no período do dia do último item, começa às 9h do dia seguinte.
+                if(proximoMinuto < minutoFimBase){
+                        minutoInicio = proximoMinuto;
+                        diaOffsetInicio = ultimoItem.diaOffset;
+                }else{
+                        minutoInicio = minutoInicioBase;
+                        diaOffsetInicio = ultimoItem.diaOffset + 1;
+                }
         }else{
                 const agora = new Date();
                 const agoraMin = agora.getHours() * 60 + agora.getMinutes();
 
-                // Dentro do período (9h-21h): começa a partir de agora. Fora do período (antes das 9h
-                // ou depois das 21h): começa às 9h (hoje, se ainda não chegou lá, ou do próximo dia).
-                minutoInicio = (agoraMin > minutoInicioBase && agoraMin < minutoFimBase)
-                        ? Math.ceil(agoraMin / 5) * 5
-                        : minutoInicioBase;
+                // Dentro do período (9h-21h): começa a partir de agora, hoje. Antes das 9h: começa
+                // às 9h de hoje. Depois das 21h: já passou do período de hoje, começa às 9h de amanhã.
+                if(agoraMin > minutoInicioBase && agoraMin < minutoFimBase){
+                        minutoInicio = Math.ceil(agoraMin / 5) * 5;
+                        diaOffsetInicio = 0;
+                }else if(agoraMin >= minutoFimBase){
+                        minutoInicio = minutoInicioBase;
+                        diaOffsetInicio = 1;
+                }else{
+                        minutoInicio = minutoInicioBase;
+                        diaOffsetInicio = 0;
+                }
         }
 
         const horariosMin = calcularHorarios(
@@ -521,9 +535,22 @@ async function prepararDia(){
                 DIA_VARIACAO
         );
 
+        // Calcula a data/hora completa (não só "14:30", mas o dia certo também),
+        // pra o Make conseguir comparar com "agora" sem ambiguidade.
+        function calcularDataHorario(diaOffset, minutoDoDia){
+                const data = new Date();
+                data.setDate(data.getDate() + diaOffset);
+                data.setHours(Math.floor(minutoDoDia / 60), minutoDoDia % 60, 0, 0);
+                return data;
+        }
+
         const novosItens = produtosDoDia.slice(0, horariosMin.length).map((produto, i) => ({
                 ...produto,
-                horario: minutosParaHora(horariosMin[i])
+                id: gerarIdUnico(),
+                horario: minutosParaHora(horariosMin[i]),
+                minutoDoDia: horariosMin[i],
+                diaOffset: diaOffsetInicio,
+                dataHoraISO: calcularDataHorario(diaOffsetInicio, horariosMin[i]).toISOString()
         }));
 
         diaPreparado = manterAnteriores

@@ -79,6 +79,10 @@ const ICONE_CATEGORIA_PADRAO = "👠";
 
 let MODO_DESENVOLVIMENTO = true;
 
+// Webhook único do Make. Os 3 tipos de pedido (buscar_produto, publicar_imediato,
+// fila_do_dia) usam a MESMA url — o Router do Make decide o que fazer com base no campo "tipo".
+const URL_WEBHOOK_MAKE = "https://hook.us2.make.com/SUBSTITUA_PELO_WEBHOOK_UNICO";
+
 const produtosTeste = [
         {
                 nome: "Sandália Feminina Santa Lolla Salto Bloco Caramelo",
